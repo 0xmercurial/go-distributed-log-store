@@ -13,6 +13,7 @@ func NewHTTPLogServer(addr string) *http.Server {
 	router := mux.NewRouter()
 	router.HandleFunc("/", logsrv.handleAppend).Methods("POST")
 	router.HandleFunc("/", logsrv.handleRead).Methods("GET")
+	router.HandleFunc("/all", logsrv.handleReadAll).Methods("GET")
 	return &http.Server{
 		Addr:    addr,
 		Handler: router,
@@ -49,6 +50,11 @@ type ReadResponse struct {
 	Record internal.Record `json"record"`
 }
 
+//All available records
+type ReadAllResponse struct {
+	Records []internal.Record `json"records"`
+}
+
 func (l *LogServer) handleAppend(w http.ResponseWriter, r *http.Request) {
 	var req AppendRequest
 	err := json.NewDecoder(r.Body).Decode(&req) // Bodies must contain base64 encoded values
@@ -71,7 +77,7 @@ func (l *LogServer) handleAppend(w http.ResponseWriter, r *http.Request) {
 
 func (l *LogServer) handleRead(w http.ResponseWriter, r *http.Request) {
 	var req ReadRequest
-	err := json.NewDecoder(r.Body).Decode(&req) // Will decode
+	err := json.NewDecoder(r.Body).Decode(&req)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
@@ -83,6 +89,16 @@ func (l *LogServer) handleRead(w http.ResponseWriter, r *http.Request) {
 	}
 	res := ReadResponse{Record: record}
 	err = json.NewEncoder(w).Encode(res)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+}
+
+func (l *LogServer) handleReadAll(w http.ResponseWriter, r *http.Request) {
+	records := l.Log.ReadAll()
+	res := ReadAllResponse{Records: records}
+	err := json.NewEncoder(w).Encode(res)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
