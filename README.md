@@ -1,1 +1,1 @@
-# Building a Distributed Service in Go
+# Building a Distributed Service (in Go)
