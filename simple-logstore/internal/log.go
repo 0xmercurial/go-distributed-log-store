@@ -49,6 +49,8 @@ func (l *Log) ReadRange(offset1 uint64, offset2 uint64) ([]Record, error) {
 }
 
 func (l *Log) ReadAll() []Record {
+	l.mu.Lock()
+	defer l.mu.Unlock()
 	return l.records
 }
 
