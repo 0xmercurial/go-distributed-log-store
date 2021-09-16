@@ -3,6 +3,7 @@ package logpack
 import (
 	"bufio"
 	"encoding/binary"
+	"log"
 	"os"
 	"sync"
 )
@@ -50,10 +51,12 @@ func newStore(f *os.File) (*store, error) {
 	}, nil
 }
 
+//Append writes value bytes as a record to the file using the binary Write method
 func (s *store) Append(p []byte) (n uint64, pos uint64, err error) {
 	s.mu.Lock()
 	defer s.mu.Unlock()
 	pos = s.size
+	//TODO: find out what the output looks like in the file
 	if err := binary.Write(s.buf, enc, uint64(len(p))); err != nil {
 		return 0, 0, err
 	}
@@ -65,4 +68,45 @@ func (s *store) Append(p []byte) (n uint64, pos uint64, err error) {
 	w += lenWidth
 	s.size += uint64(w)
 	return uint64(w), pos, nil
+}
+
+// Read reads bytes at a given postion and returns them
+func (s *store) Read(pos uint64) ([]byte, error) {
+	s.mu.Lock()
+	defer s.mu.Unlock()
+	if err := s.buf.Flush(); err != nil { //ensure no data is still in the buffer
+		return nil, err
+	}
+	size := make([]byte, lenWidth)
+	if _, err := s.File.ReadAt(size, int64(pos)); err != nil {
+		return nil, err
+	}
+	log.Println(size) //remove logs after test
+	b := make([]byte, enc.Uint16(size))
+	if _, err := s.File.ReadAt(b, int64(pos+lenWidth)); err != nil { // try and read record of length lenWidth starting at position pos
+		return nil, err
+	}
+	log.Println(b) //remove logs after test
+	return b, nil
+}
+
+//TODO: This seems redudant?
+func (s *store) ReadAt(p []byte, off int64) (int, error) {
+	s.mu.Lock()
+	defer s.mu.Unlock()
+	if err := s.buf.Flush(); err != nil {
+		return 0, err
+	}
+	return s.File.ReadAt(p, off)
+}
+
+//Close persists data before closing the store file
+func (s *store) Close() error {
+	s.mu.Lock()
+	defer s.mu.Unlock()
+	err := s.buf.Flush()
+	if err != nil {
+		return err
+	}
+	return s.File.Close()
 }
