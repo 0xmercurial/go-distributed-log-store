@@ -10,8 +10,8 @@ import (
 )
 
 var (
-	write = []byte("henlo world")
-	width = uint64(len(write)) + lenWidth
+	record = []byte("henlo world")
+	width  = uint64(len(record)) + lenWidth
 )
 
 func TestEndian(t *testing.T) {
@@ -34,7 +34,14 @@ func TestStoreAppendRead(t *testing.T) {
 	testReadAt(t, s)
 }
 
-func testAppend(t *testing.T, s *store) {}
+func testAppend(t *testing.T, s *store) {
+	t.Helper()
+	for i := uint64(1); i < 4; i++ {
+		n, pos, err := s.Append(record)
+		assert.Equal(t, err, nil)
+		assert.Equal(t, pos+n, width*i)
+	}
+}
 
 func testRead(t *testing.T, s *store) {}
 
