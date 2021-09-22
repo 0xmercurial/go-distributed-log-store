@@ -43,6 +43,15 @@ func testAppend(t *testing.T, s *store) {
 	}
 }
 
-func testRead(t *testing.T, s *store) {}
+func testRead(t *testing.T, s *store) {
+	t.Helper()
+	var pos uint64
+	for i := uint64(1); i < 4; i++ {
+		read, err := s.Read(pos)
+		assert.Equal(t, err, nil)
+		assert.Equal(t, record, read)
+		pos += width
+	}
+}
 
 func testReadAt(t *testing.T, s *store) {}
