@@ -56,11 +56,14 @@ func (s *store) Append(p []byte) (n uint64, pos uint64, err error) {
 	s.mu.Lock()
 	defer s.mu.Unlock()
 	pos = s.size
-	//TODO: find out what the output looks like in the file
+	//Writing length of record for later read
 	if err := binary.Write(s.buf, enc, uint64(len(p))); err != nil {
 		return 0, 0, err
 	}
+	log.Println("Record len: ", uint64(len(p)))
 	log.Println("Appending: ", p)
+	log.Println("Pos: ", pos)
+	//Writing actual record
 	w, err := s.buf.Write(p)
 	if err != nil {
 		return 0, 0, err
@@ -78,6 +81,7 @@ func (s *store) Read(pos uint64) ([]byte, error) {
 	if err := s.buf.Flush(); err != nil { //ensure no data is still in the buffer
 		return nil, err
 	}
+	//Read the first 8 bytes for length of record
 	size := make([]byte, lenWidth)
 	n, err := s.File.ReadAt(size, int64(pos))
 	if err != nil {
@@ -86,6 +90,8 @@ func (s *store) Read(pos uint64) ([]byte, error) {
 	log.Println("N-read: ", n)
 	log.Println("Size: ", size) //remove logs after test
 	log.Println("Sint: ", enc.Uint64(size))
+
+	//Read the next `size` number of bytes after the length record.
 	b := make([]byte, enc.Uint64(size))
 	if _, err := s.File.ReadAt(b, int64(pos+lenWidth)); err != nil { // try and read record of length lenWidth starting at position pos
 		return nil, err
