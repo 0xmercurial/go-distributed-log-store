@@ -3,7 +3,6 @@ package logpack
 import (
 	"bufio"
 	"encoding/binary"
-	"log"
 	"os"
 	"sync"
 )
@@ -60,9 +59,9 @@ func (s *store) Append(p []byte) (n uint64, pos uint64, err error) {
 	if err := binary.Write(s.buf, enc, uint64(len(p))); err != nil {
 		return 0, 0, err
 	}
-	log.Println("Record len: ", uint64(len(p)))
-	log.Println("Appending: ", p)
-	log.Println("Pos: ", pos)
+	// log.Println("Record len: ", uint64(len(p)))
+	// log.Println("Appending: ", p)
+	// log.Println("Pos: ", pos)
 	//Writing actual record
 	w, err := s.buf.Write(p)
 	if err != nil {
@@ -83,20 +82,20 @@ func (s *store) Read(pos uint64) ([]byte, error) {
 	}
 	//Read the first 8 bytes for length of record
 	size := make([]byte, lenWidth)
-	n, err := s.File.ReadAt(size, int64(pos))
+	_, err := s.File.ReadAt(size, int64(pos))
 	if err != nil {
 		return nil, err
 	}
-	log.Println("N-read: ", n)
-	log.Println("Size: ", size) //remove logs after test
-	log.Println("Sint: ", enc.Uint64(size))
+	// log.Println("N-read: ", n)
+	// log.Println("Size: ", size) //remove logs after test
+	// log.Println("Sint: ", enc.Uint64(size))
 
 	//Read the next `size` number of bytes after the length record.
 	b := make([]byte, enc.Uint64(size))
 	if _, err := s.File.ReadAt(b, int64(pos+lenWidth)); err != nil { // try and read record of length lenWidth starting at position pos
 		return nil, err
 	}
-	log.Println("Read: ", b) //remove logs after test
+	// log.Println("Read: ", b) //remove logs after test
 	return b, nil
 }
 

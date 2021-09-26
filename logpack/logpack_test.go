@@ -21,7 +21,7 @@ func TestStoreAppendRead(t *testing.T) {
 	s, err := newStore(f)
 	assert.Equal(t, err, nil)
 
-	t.Log("Record: ", record)
+	// t.Log("Record: ", record)
 	testAppend(t, s)
 	testRead(t, s)
 	testReadAt(t, s)
