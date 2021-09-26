@@ -9,7 +9,7 @@ import (
 )
 
 var (
-	record = []byte("hello world")
+	record = []byte("hello, world")
 	width  = uint64(len(record)) + lenWidth
 )
 
