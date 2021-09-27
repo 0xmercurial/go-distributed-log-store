@@ -17,3 +17,21 @@ type index struct {
 	mmap gommap.MMap
 	size uint64
 }
+
+func newIndex(f *os.File) (*index, error) {
+
+	fi, err := os.Stat(f.Name())
+	if err != nil {
+		return nil , err
+	}
+
+	//TODO: Implement config struct
+	size := uint64(fi.Size())
+	if err = os.Truncate(
+		f.Name(), int64()
+	)
+
+	idx := &index {
+		file: f,
+	}
+}
