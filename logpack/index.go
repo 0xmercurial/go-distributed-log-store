@@ -27,9 +27,13 @@ func newIndex(f *os.File) (*index, error) {
 
 	//TODO: Implement config struct
 	size := uint64(fi.Size())
-	if err = os.Truncate(
+	err = os.Truncate(
 		f.Name(), int64()
-	)
+	) 
+	if err != nil {
+		nil, err
+	}
+	//TODO: Research beter configs for indexing
 
 	idx := &index {
 		file: f,
