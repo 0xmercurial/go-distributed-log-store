@@ -28,7 +28,7 @@ func newIndex(f *os.File) (*index, error) {
 	//TODO: Implement config struct
 	size := uint64(fi.Size())
 	err = os.Truncate(
-		f.Name(), int64()
+		f.Name(), int64(c.Segment.MaxIndexBytes),
 	) 
 	if err != nil {
 		nil, err
@@ -38,4 +38,18 @@ func newIndex(f *os.File) (*index, error) {
 	idx := &index {
 		file: f,
 	}
+}
+
+func (i *index) Close() error {
+	if err := i.mmap.Sync(gommap.MS_SYNC); err != nil {
+		return err
+	}
+	if err := i.file.Sync(); err != nil {
+		return err
+	}
+	if err := i.file.Truncate(int64(i.size)); err != nil {
+		return err
+	}
+
+	return i.file.Close();
 }
