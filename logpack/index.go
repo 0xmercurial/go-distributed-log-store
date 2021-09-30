@@ -18,26 +18,43 @@ type index struct {
 	size uint64
 }
 
-func newIndex(f *os.File) (*index, error) {
+type Config struct {
+	Segment struct {
+		MaxStoreBytes uint64
+		MaxIndexBytes uint64
+		InitialOffset uint64
+	}
+}
+
+func newIndex(f *os.File, c Config) (*index, error) {
 
 	fi, err := os.Stat(f.Name())
 	if err != nil {
-		return nil , err
+		return nil, err
 	}
-
 	//TODO: Implement config struct
 	size := uint64(fi.Size())
 	err = os.Truncate(
 		f.Name(), int64(c.Segment.MaxIndexBytes),
-	) 
+	)
 	if err != nil {
-		nil, err
+		return nil, err
 	}
 	//TODO: Research beter configs for indexing
-
-	idx := &index {
+	idx := &index{
 		file: f,
+		size: size,
 	}
+	mmap, err := gommap.Map(
+		idx.file.Fd(),
+		gommap.PROT_READ|gommap.PROT_WRITE,
+		gommap.MAP_SHARED,
+	)
+	if err != nil {
+		return nil, err
+	}
+	idx.mmap = mmap
+	return idx, nil
 }
 
 func (i *index) Close() error {
@@ -50,6 +67,5 @@ func (i *index) Close() error {
 	if err := i.file.Truncate(int64(i.size)); err != nil {
 		return err
 	}
-
-	return i.file.Close();
+	return i.file.Close()
 }
