@@ -1,12 +1,14 @@
 package logpack
 
 import (
+	"io"
 	"os"
 
 	"github.com/tysontate/gommap"
 )
 
 var (
+	//position of entry in file is offset * entWidth
 	offWidth uint64 = 4
 	posWidth uint64 = 8
 	entWidth        = offWidth + posWidth
@@ -14,8 +16,8 @@ var (
 
 type index struct {
 	file *os.File
-	mmap gommap.MMap
-	size uint64
+	mmap gommap.MMap //map underlying file
+	size uint64      //track size of file pointed to
 }
 
 type Config struct {
@@ -46,7 +48,7 @@ func newIndex(f *os.File, c Config) (*index, error) {
 		size: size,
 	}
 	mmap, err := gommap.Map(
-		idx.file.Fd(),
+		idx.file.Fd(), //memory map requires ptr to underlying file
 		gommap.PROT_READ|gommap.PROT_WRITE,
 		gommap.MAP_SHARED,
 	)
@@ -58,14 +60,34 @@ func newIndex(f *os.File, c Config) (*index, error) {
 }
 
 func (i *index) Close() error {
+	//Ensure mmap has synced data to file and that file has flushed contents to stable store.
 	if err := i.mmap.Sync(gommap.MS_SYNC); err != nil {
 		return err
 	}
 	if err := i.file.Sync(); err != nil {
 		return err
 	}
+	//Remove blank space at end of file
 	if err := i.file.Truncate(int64(i.size)); err != nil {
 		return err
 	}
 	return i.file.Close()
+}
+
+func (i *index) Read(in int64) (out uint32, pos uint64, err error) {
+	if i.size == 0 {
+		return 0, 0, io.EOF
+	}
+	if in == -1 {
+		out = uint32((i.size / entWidth) - 1)
+	} else {
+		out = uint32(in)
+	}
+	pos = uint64(out) * entWidth
+	if i.size < pos+entWidth {
+		return 0, 0, io.EOF
+	}
+	out = enc.Uint32(i.mmap[pos : pos+offWidth])
+	pos = enc.Uint64(i.mmap[pos+offWidth : pos+entWidth])
+	return out, pos, nil
 }
