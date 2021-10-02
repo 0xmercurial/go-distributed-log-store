@@ -1,4 +1,4 @@
-package logpack
+package logcomponents
 
 import (
 	"io/ioutil"

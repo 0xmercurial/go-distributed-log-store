@@ -1,4 +1,4 @@
-package logpack
+package logcomponents
 
 type Config struct {
 	Segment struct {
