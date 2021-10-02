@@ -1,6 +1,7 @@
 package logpack
 
 import (
+	"io"
 	"io/ioutil"
 	"os"
 	"testing"
@@ -9,6 +10,7 @@ import (
 )
 
 func TestIndex(t *testing.T) {
+	//Building index from new/temp file
 	f, err := ioutil.TempFile(os.TempDir(), "index_test")
 	assert.Equal(t, err, nil)
 	defer os.Remove(f.Name())
@@ -18,8 +20,9 @@ func TestIndex(t *testing.T) {
 	idx, err := newIndex(f, c)
 	assert.Equal(t, err, nil)
 
-	_, _, err = idx.Read(-1)
-	assert.Equal(t, err, nil)
+	//Reading index w/ empty mmap
+	_, _, err = idx.Read(3) // <- any integer value will trigger an error at this stage
+	assert.Error(t, err, nil)
 	assert.Equal(t, f.Name(), idx.Name())
 
 	entries := []struct {
@@ -33,5 +36,22 @@ func TestIndex(t *testing.T) {
 	for _, want := range entries {
 		err = idx.Write(want.Off, want.Pos)
 		assert.Equal(t, err, nil)
+		_, pos, err := idx.Read(int64(want.Off))
+		assert.Equal(t, err, nil)
+		assert.Equal(t, want.Pos, pos)
 	}
+
+	_, _, err = idx.Read(int64(len(entries)))
+	assert.Equal(t, io.EOF, err)
+	idx.Close()
+
+	// BUilding index from existing file
+	f, _ = os.OpenFile(f.Name(), os.O_RDWR, 6000)
+	idx, err = newIndex(f, c)
+	assert.Equal(t, err, nil)
+	off, pos, err := idx.Read(-1)
+	assert.Equal(t, err, nil)
+	assert.Equal(t, uint32(1), off)
+	assert.Equal(t, entries[1].Pos, pos)
+
 }
