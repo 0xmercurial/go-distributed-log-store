@@ -21,7 +21,7 @@ func TestIndex(t *testing.T) {
 	assert.Equal(t, err, nil)
 
 	//Reading index w/ empty mmap
-	_, _, err = idx.Read(3) // <- any integer value will trigger an error at this stage
+	_, _, err = idx.Read(-1) // <- any integer value will trigger an error at this stage
 	assert.Error(t, err, nil)
 	assert.Equal(t, f.Name(), idx.Name())
 

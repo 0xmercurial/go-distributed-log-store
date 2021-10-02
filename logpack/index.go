@@ -20,14 +20,6 @@ type index struct {
 	size uint64      //track size of file pointed to
 }
 
-type Config struct {
-	Segment struct {
-		MaxStoreBytes uint64
-		MaxIndexBytes uint64
-		InitialOffset uint64
-	}
-}
-
 func newIndex(f *os.File, c Config) (*index, error) {
 
 	fi, err := os.Stat(f.Name())
