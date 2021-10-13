@@ -85,6 +85,7 @@ func (s *segment) Read(off uint64) (*prolog.Record, error) {
 	if err != nil {
 		return nil, err
 	}
+
 	p, err := s.store.Read(pos)
 	if err != nil {
 		return nil, err
@@ -93,4 +94,37 @@ func (s *segment) Read(off uint64) (*prolog.Record, error) {
 	record := &prolog.Record{}
 	err = proto.Unmarshal(p, record)
 	return record, err
+}
+
+func (s *segment) IsMaxed() bool {
+	/*
+		Check if store or index size is greater than configured Max
+		- segment tracks absolute volume of log material
+		- index tracks number of logs
+	*/
+	return s.store.size >= s.config.Segment.MaxStoreBytes ||
+		s.index.size >= s.config.Segment.MaxStoreBytes
+}
+
+func (s *segment) Remove() error {
+	if err := s.Close(); err != nil {
+		return err
+	}
+	if err := os.Remove(s.index.Name()); err != nil {
+		return err
+	}
+	if err := os.Remove(s.store.Name()); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (s *segment) Close() error {
+	if err := s.index.Close(); err != nil {
+		return err
+	}
+	if err := s.store.Close(); err != nil {
+		return err
+	}
+	return nil
 }
