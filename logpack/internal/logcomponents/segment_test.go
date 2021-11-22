@@ -1,6 +1,7 @@
 package logcomponents
 
 import (
+	"io"
 	"io/ioutil"
 	prolog "logpack/internal/log/proto"
 	"os"
@@ -10,6 +11,7 @@ import (
 )
 
 func TestSegment(t *testing.T) {
+	//Test that append/read method for segment works.
 	dir, _ := ioutil.TempDir("", "seg-test")
 	defer os.Remove(dir)
 
@@ -26,6 +28,30 @@ func TestSegment(t *testing.T) {
 	assert.Equal(t, false, s.IsMaxed())
 
 	for i := uint64(0); i < 3; i++ {
+		off, err := s.Append(want)
+		assert.Equal(t, err, nil)
+		assert.Equal(t, 16+i, off)
+
+		got, err := s.Read(off)
+		assert.NoError(t, err)
+		assert.Equal(t, want.Value, got.Value)
 	}
+
+	_, err = s.Append(want)
+	assert.Equal(t, io.EOF, err)
+	assert.True(t, s.IsMaxed())
+
+	c.Segment.MaxStoreBytes = uint64(len(want.Value) * 3)
+	c.Segment.MaxIndexBytes = 1024
+
+	s, err = newSegment(dir, 16, c)
+	assert.NoError(t, err)
+	assert.True(t, s.IsMaxed())
+
+	err = s.Remove()
+	assert.NoError(t, err)
+	s, err = newSegment(dir, 16, c)
+	assert.NoError(t, err)
+	assert.False(t, s.IsMaxed())
 
 }
