@@ -14,6 +14,23 @@ type Log struct {
 	segments      []*segment
 }
 
-func NewLog(dir string, c Config) {
+func NewLog(dir string, c Config) (*Log, error) {
 
+	if c.Segment.MaxStoreBytes == 0 {
+		c.Segment.MaxStoreBytes = 1024
+	}
+
+	if c.Segment.MaxIndexBytes == 0 {
+		c.Segment.MaxIndexBytes = 1024
+	}
+	l := &Log{
+		Dir:    dir,
+		Config: c,
+	}
+
+	return l, l.setup()
+}
+
+func (l *Log) setup() error {
+	return nil
 }
