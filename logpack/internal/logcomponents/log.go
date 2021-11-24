@@ -33,4 +33,12 @@ func NewLog(dir string, c Config) (*Log, error) {
 
 func (l *Log) setup() error {
 	return nil
+	// files, err := ioutil.ReadDir(l.Dir)
+	// if err != nil {
+	// 	return err
+	// }
+	// var baseOffsets []uint64
+	// for _, file := range files {
+	// 	offStr := strings.TrimSuffix(file.Name(), path.Ext(file.Name()))
+	// }
 }

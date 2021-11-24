@@ -14,7 +14,7 @@ type Record struct {
 var ErrOffsetNotFound = fmt.Errorf("offset not found")
 
 type Log struct {
-	mu      sync.Mutex
+	mu      sync.Mutex //mutual exclusion lock
 	records []Record
 }
 

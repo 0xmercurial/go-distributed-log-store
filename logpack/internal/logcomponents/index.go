@@ -15,7 +15,7 @@ var (
 )
 
 type index struct {
-	file *os.File
+	file *os.File    //persisted file
 	mmap gommap.MMap //map underlying file
 	size uint64      //track size of file pointed to
 }
