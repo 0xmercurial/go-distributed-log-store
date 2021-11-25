@@ -3,7 +3,7 @@ package logcomponents
 import (
 	"io"
 	"io/ioutil"
-	prolog "logpack/internal/log/proto"
+	prolog "logstore/internal/log/proto"
 	"os"
 	"testing"
 

@@ -2,8 +2,8 @@ package handler
 
 import (
 	"encoding/json"
+	logr "logstore/internal/record"
 	"net/http"
-	"simple-logstore/internal"
 
 	"github.com/gorilla/mux"
 )
@@ -21,18 +21,18 @@ func NewHTTPLogServer(addr string) *http.Server {
 }
 
 type LogServer struct {
-	Log *internal.Log
+	Log *logr.Log
 }
 
 func newLogServer() *LogServer {
 	return &LogServer{
-		Log: internal.NewLog(),
+		Log: logr.NewLog(),
 	}
 }
 
 //Record being appended
 type AppendRequest struct {
-	Record internal.Record `json"record"`
+	Record logr.Record `json"record"`
 }
 
 //Offset of appended Record
@@ -47,12 +47,12 @@ type ReadRequest struct {
 
 //Record at requested Offset
 type ReadResponse struct {
-	Record internal.Record `json"record"`
+	Record logr.Record `json"record"`
 }
 
 //All available records
 type ReadAllResponse struct {
-	Records []internal.Record `json"records"`
+	Records []logr.Record `json"records"`
 }
 
 func (l *LogServer) handleAppend(w http.ResponseWriter, r *http.Request) {

@@ -2,7 +2,7 @@ package main
 
 import (
 	"log"
-	"simple-logstore/handler"
+	"logstore/handler"
 )
 
 func main() {

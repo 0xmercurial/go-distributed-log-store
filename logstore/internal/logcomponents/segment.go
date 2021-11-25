@@ -2,7 +2,7 @@ package logcomponents
 
 import (
 	"fmt"
-	prolog "logpack/internal/log/proto"
+	prolog "logstore/internal/log/proto"
 	"os"
 	"path"
 

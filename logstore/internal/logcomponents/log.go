@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"io"
 	"io/ioutil"
-	"logpack/internal/log/proto"
+	"logstore/internal/log/proto"
 	"os"
 	"path"
 	"sort"
