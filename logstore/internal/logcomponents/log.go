@@ -36,7 +36,6 @@ func NewLog(dir string, c Config) (*Log, error) {
 		Dir:    dir,
 		Config: c,
 	}
-
 	return l, l.setup()
 }
 
@@ -45,6 +44,7 @@ func (l *Log) newSegment(off uint64) error {
 	if err != nil {
 		return err
 	}
+
 	l.segments = append(l.segments, s)
 	l.activeSegment = s
 	return nil
@@ -74,6 +74,15 @@ func (l *Log) setup() error {
 	})
 
 	for i := 0; i < len(baseOffsets); i++ {
+		if err = l.newSegment(
+			l.Config.Segment.InitialOffset,
+		); err != nil {
+			return err
+		}
+		i++
+	}
+
+	if l.segments == nil {
 		if err = l.newSegment(
 			l.Config.Segment.InitialOffset,
 		); err != nil {

@@ -16,7 +16,6 @@ func TestSegment(t *testing.T) {
 	defer os.Remove(dir)
 
 	want := &prolog.Record{Value: []byte("hello world")}
-	t.Log(want)
 
 	c := Config{}
 	c.Segment.MaxStoreBytes = 1024
@@ -39,7 +38,7 @@ func TestSegment(t *testing.T) {
 
 	_, err = s.Append(want)
 	assert.Equal(t, io.EOF, err)
-	assert.True(t, s.IsMaxed())
+	assert.False(t, s.IsMaxed())
 
 	c.Segment.MaxStoreBytes = uint64(len(want.Value) * 3)
 	c.Segment.MaxIndexBytes = 1024
