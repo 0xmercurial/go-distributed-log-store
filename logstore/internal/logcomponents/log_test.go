@@ -31,18 +31,14 @@ func TestAppendRead(t *testing.T) {
 	dir, c := helper()
 	log, err := NewLog(dir, c)
 	assert.NoError(t, err)
-
-	t.Log("active segment: ", log.activeSegment)
-
 	newRec := &proto.Record{
 		Value: []byte("hello world"),
 	}
-	t.Log(log)
 	off, err := log.Append(newRec)
 	if err != nil {
 		t.Error(err)
 	}
-	// assert.NoError(t, err)
+	assert.NoError(t, err)
 	assert.Equal(t, uint64(0), off)
 
 	read, err := log.Read(off)
