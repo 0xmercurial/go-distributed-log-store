@@ -74,9 +74,7 @@ func (l *Log) setup() error {
 	})
 
 	for i := 0; i < len(baseOffsets); i++ {
-		if err = l.newSegment(
-			l.Config.Segment.InitialOffset,
-		); err != nil {
+		if err = l.newSegment(baseOffsets[i]); err != nil {
 			return err
 		}
 		i++
@@ -206,6 +204,9 @@ func (l *Log) Truncate(lowest uint64) error {
 	return nil
 }
 
+/*
+Reader returns io.Reader to read log
+*/
 func (l *Log) Reader() io.Reader {
 	l.mu.RLock()
 	defer l.mu.RUnlock()
