@@ -25,13 +25,33 @@ func newGrpcServer(config *Config) (srv *grpcServer, err error) {
 	return srv, nil
 }
 
-func (s *grpcServer) Append(ctx context.Context, req *proto.AppendRequest) (
-	*proto.AppendResponse, error) {
+func (s *grpcServer) Append(
+	ctx context.Context,
+	req *proto.AppendRequest,
+) (*proto.AppendResponse, error) {
 	off, err := s.CommitLog.Append(req.Record)
 	if err != nil {
 		return nil, err
 	}
 	return &proto.AppendResponse{Offset: off}, nil
+}
+
+func (s *grpcServer) AppendStream(
+	stream *proto.Log_AppendStreamServer,
+) error {
+	for {
+		req, err := stream.Recv()
+		if err != nil {
+			return err
+		}
+		res, err := s.Append(stream.Context(), req)
+		if err != nil {
+			return err
+		}
+		if err = stream.Send(res); err != nil {
+			return err
+		}
+	}
 }
 
 func (s *grpcServer) Read(ctx context.Context, req *proto.ReadRequest) (
@@ -41,4 +61,30 @@ func (s *grpcServer) Read(ctx context.Context, req *proto.ReadRequest) (
 		return nil, err
 	}
 	return &proto.ReadResponse{Record: record}, nil
+}
+
+func (s *grpcServer) ReadStream(
+	req *proto.ReadRequest,
+	stream proto.Log_ReadStreamServer,
+) error {
+	for {
+		select {
+		case <-stream.Context().Done():
+			return nil
+		default:
+			res, err := s.Consume(stream.Context(), req)
+			switch err.(type) {
+			case nil:
+				continue
+			case proto.ErrOffOutOfRange:
+				continue
+			default:
+				return err
+			}
+			if err = stream.Send(res); err != nil {
+				return err
+			}
+			req.Offset++
+		}
+	}
 }
