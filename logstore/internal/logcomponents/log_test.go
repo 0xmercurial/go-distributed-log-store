@@ -101,7 +101,6 @@ func TestReader(t *testing.T) {
 	readRec := &prolog.Record{}
 	err = proto.Unmarshal(byt[lenWidth:], readRec)
 	assert.Equal(t, record.Value, readRec.Value)
-
 }
 
 func TestTruncate(t *testing.T) {

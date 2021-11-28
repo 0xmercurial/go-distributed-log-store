@@ -80,7 +80,7 @@ func (x *Record) GetOffset() uint64 {
 	return 0
 }
 
-type ReadRequest struct {
+type AppendRequest struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
@@ -88,104 +88,10 @@ type ReadRequest struct {
 	Record *Record `protobuf:"bytes,1,opt,name=record,proto3" json:"record,omitempty"`
 }
 
-func (x *ReadRequest) Reset() {
-	*x = ReadRequest{}
-	if protoimpl.UnsafeEnabled {
-		mi := &file_internal_log_proto_log_proto_msgTypes[1]
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		ms.StoreMessageInfo(mi)
-	}
-}
-
-func (x *ReadRequest) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*ReadRequest) ProtoMessage() {}
-
-func (x *ReadRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_internal_log_proto_log_proto_msgTypes[1]
-	if protoimpl.UnsafeEnabled && x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use ReadRequest.ProtoReflect.Descriptor instead.
-func (*ReadRequest) Descriptor() ([]byte, []int) {
-	return file_internal_log_proto_log_proto_rawDescGZIP(), []int{1}
-}
-
-func (x *ReadRequest) GetRecord() *Record {
-	if x != nil {
-		return x.Record
-	}
-	return nil
-}
-
-type ReadResponse struct {
-	state         protoimpl.MessageState
-	sizeCache     protoimpl.SizeCache
-	unknownFields protoimpl.UnknownFields
-
-	Offset uint64 `protobuf:"varint,1,opt,name=offset,proto3" json:"offset,omitempty"`
-}
-
-func (x *ReadResponse) Reset() {
-	*x = ReadResponse{}
-	if protoimpl.UnsafeEnabled {
-		mi := &file_internal_log_proto_log_proto_msgTypes[2]
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		ms.StoreMessageInfo(mi)
-	}
-}
-
-func (x *ReadResponse) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*ReadResponse) ProtoMessage() {}
-
-func (x *ReadResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_internal_log_proto_log_proto_msgTypes[2]
-	if protoimpl.UnsafeEnabled && x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use ReadResponse.ProtoReflect.Descriptor instead.
-func (*ReadResponse) Descriptor() ([]byte, []int) {
-	return file_internal_log_proto_log_proto_rawDescGZIP(), []int{2}
-}
-
-func (x *ReadResponse) GetOffset() uint64 {
-	if x != nil {
-		return x.Offset
-	}
-	return 0
-}
-
-type AppendRequest struct {
-	state         protoimpl.MessageState
-	sizeCache     protoimpl.SizeCache
-	unknownFields protoimpl.UnknownFields
-
-	Offset uint64 `protobuf:"varint,1,opt,name=offset,proto3" json:"offset,omitempty"`
-}
-
 func (x *AppendRequest) Reset() {
 	*x = AppendRequest{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_internal_log_proto_log_proto_msgTypes[3]
+		mi := &file_internal_log_proto_log_proto_msgTypes[1]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -198,7 +104,7 @@ func (x *AppendRequest) String() string {
 func (*AppendRequest) ProtoMessage() {}
 
 func (x *AppendRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_internal_log_proto_log_proto_msgTypes[3]
+	mi := &file_internal_log_proto_log_proto_msgTypes[1]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -211,14 +117,14 @@ func (x *AppendRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use AppendRequest.ProtoReflect.Descriptor instead.
 func (*AppendRequest) Descriptor() ([]byte, []int) {
-	return file_internal_log_proto_log_proto_rawDescGZIP(), []int{3}
+	return file_internal_log_proto_log_proto_rawDescGZIP(), []int{1}
 }
 
-func (x *AppendRequest) GetOffset() uint64 {
+func (x *AppendRequest) GetRecord() *Record {
 	if x != nil {
-		return x.Offset
+		return x.Record
 	}
-	return 0
+	return nil
 }
 
 type AppendResponse struct {
@@ -226,13 +132,13 @@ type AppendResponse struct {
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	Record *Record `protobuf:"bytes,2,opt,name=record,proto3" json:"record,omitempty"`
+	Offset uint64 `protobuf:"varint,1,opt,name=offset,proto3" json:"offset,omitempty"`
 }
 
 func (x *AppendResponse) Reset() {
 	*x = AppendResponse{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_internal_log_proto_log_proto_msgTypes[4]
+		mi := &file_internal_log_proto_log_proto_msgTypes[2]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -245,7 +151,7 @@ func (x *AppendResponse) String() string {
 func (*AppendResponse) ProtoMessage() {}
 
 func (x *AppendResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_internal_log_proto_log_proto_msgTypes[4]
+	mi := &file_internal_log_proto_log_proto_msgTypes[2]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -258,10 +164,104 @@ func (x *AppendResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use AppendResponse.ProtoReflect.Descriptor instead.
 func (*AppendResponse) Descriptor() ([]byte, []int) {
+	return file_internal_log_proto_log_proto_rawDescGZIP(), []int{2}
+}
+
+func (x *AppendResponse) GetOffset() uint64 {
+	if x != nil {
+		return x.Offset
+	}
+	return 0
+}
+
+type ReadRequest struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	Offset uint64 `protobuf:"varint,1,opt,name=offset,proto3" json:"offset,omitempty"`
+}
+
+func (x *ReadRequest) Reset() {
+	*x = ReadRequest{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_internal_log_proto_log_proto_msgTypes[3]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *ReadRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ReadRequest) ProtoMessage() {}
+
+func (x *ReadRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_internal_log_proto_log_proto_msgTypes[3]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ReadRequest.ProtoReflect.Descriptor instead.
+func (*ReadRequest) Descriptor() ([]byte, []int) {
+	return file_internal_log_proto_log_proto_rawDescGZIP(), []int{3}
+}
+
+func (x *ReadRequest) GetOffset() uint64 {
+	if x != nil {
+		return x.Offset
+	}
+	return 0
+}
+
+type ReadResponse struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	Record *Record `protobuf:"bytes,2,opt,name=record,proto3" json:"record,omitempty"`
+}
+
+func (x *ReadResponse) Reset() {
+	*x = ReadResponse{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_internal_log_proto_log_proto_msgTypes[4]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *ReadResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ReadResponse) ProtoMessage() {}
+
+func (x *ReadResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_internal_log_proto_log_proto_msgTypes[4]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ReadResponse.ProtoReflect.Descriptor instead.
+func (*ReadResponse) Descriptor() ([]byte, []int) {
 	return file_internal_log_proto_log_proto_rawDescGZIP(), []int{4}
 }
 
-func (x *AppendResponse) GetRecord() *Record {
+func (x *ReadResponse) GetRecord() *Record {
 	if x != nil {
 		return x.Record
 	}
@@ -276,32 +276,32 @@ var file_internal_log_proto_log_proto_rawDesc = []byte{
 	0x6c, 0x6f, 0x67, 0x22, 0x36, 0x0a, 0x06, 0x52, 0x65, 0x63, 0x6f, 0x72, 0x64, 0x12, 0x14, 0x0a,
 	0x05, 0x76, 0x61, 0x6c, 0x75, 0x65, 0x18, 0x01, 0x20, 0x01, 0x28, 0x0c, 0x52, 0x05, 0x76, 0x61,
 	0x6c, 0x75, 0x65, 0x12, 0x16, 0x0a, 0x06, 0x6f, 0x66, 0x66, 0x73, 0x65, 0x74, 0x18, 0x02, 0x20,
-	0x01, 0x28, 0x04, 0x52, 0x06, 0x6f, 0x66, 0x66, 0x73, 0x65, 0x74, 0x22, 0x32, 0x0a, 0x0b, 0x52,
-	0x65, 0x61, 0x64, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x12, 0x23, 0x0a, 0x06, 0x72, 0x65,
-	0x63, 0x6f, 0x72, 0x64, 0x18, 0x01, 0x20, 0x01, 0x28, 0x0b, 0x32, 0x0b, 0x2e, 0x6c, 0x6f, 0x67,
-	0x2e, 0x52, 0x65, 0x63, 0x6f, 0x72, 0x64, 0x52, 0x06, 0x72, 0x65, 0x63, 0x6f, 0x72, 0x64, 0x22,
-	0x26, 0x0a, 0x0c, 0x52, 0x65, 0x61, 0x64, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x12,
-	0x16, 0x0a, 0x06, 0x6f, 0x66, 0x66, 0x73, 0x65, 0x74, 0x18, 0x01, 0x20, 0x01, 0x28, 0x04, 0x52,
-	0x06, 0x6f, 0x66, 0x66, 0x73, 0x65, 0x74, 0x22, 0x27, 0x0a, 0x0d, 0x41, 0x70, 0x70, 0x65, 0x6e,
-	0x64, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x12, 0x16, 0x0a, 0x06, 0x6f, 0x66, 0x66, 0x73,
-	0x65, 0x74, 0x18, 0x01, 0x20, 0x01, 0x28, 0x04, 0x52, 0x06, 0x6f, 0x66, 0x66, 0x73, 0x65, 0x74,
-	0x22, 0x35, 0x0a, 0x0e, 0x41, 0x70, 0x70, 0x65, 0x6e, 0x64, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e,
+	0x01, 0x28, 0x04, 0x52, 0x06, 0x6f, 0x66, 0x66, 0x73, 0x65, 0x74, 0x22, 0x34, 0x0a, 0x0d, 0x41,
+	0x70, 0x70, 0x65, 0x6e, 0x64, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x12, 0x23, 0x0a, 0x06,
+	0x72, 0x65, 0x63, 0x6f, 0x72, 0x64, 0x18, 0x01, 0x20, 0x01, 0x28, 0x0b, 0x32, 0x0b, 0x2e, 0x6c,
+	0x6f, 0x67, 0x2e, 0x52, 0x65, 0x63, 0x6f, 0x72, 0x64, 0x52, 0x06, 0x72, 0x65, 0x63, 0x6f, 0x72,
+	0x64, 0x22, 0x28, 0x0a, 0x0e, 0x41, 0x70, 0x70, 0x65, 0x6e, 0x64, 0x52, 0x65, 0x73, 0x70, 0x6f,
+	0x6e, 0x73, 0x65, 0x12, 0x16, 0x0a, 0x06, 0x6f, 0x66, 0x66, 0x73, 0x65, 0x74, 0x18, 0x01, 0x20,
+	0x01, 0x28, 0x04, 0x52, 0x06, 0x6f, 0x66, 0x66, 0x73, 0x65, 0x74, 0x22, 0x25, 0x0a, 0x0b, 0x52,
+	0x65, 0x61, 0x64, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x12, 0x16, 0x0a, 0x06, 0x6f, 0x66,
+	0x66, 0x73, 0x65, 0x74, 0x18, 0x01, 0x20, 0x01, 0x28, 0x04, 0x52, 0x06, 0x6f, 0x66, 0x66, 0x73,
+	0x65, 0x74, 0x22, 0x33, 0x0a, 0x0c, 0x52, 0x65, 0x61, 0x64, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e,
 	0x73, 0x65, 0x12, 0x23, 0x0a, 0x06, 0x72, 0x65, 0x63, 0x6f, 0x72, 0x64, 0x18, 0x02, 0x20, 0x01,
 	0x28, 0x0b, 0x32, 0x0b, 0x2e, 0x6c, 0x6f, 0x67, 0x2e, 0x52, 0x65, 0x63, 0x6f, 0x72, 0x64, 0x52,
 	0x06, 0x72, 0x65, 0x63, 0x6f, 0x72, 0x64, 0x32, 0xdf, 0x01, 0x0a, 0x03, 0x4c, 0x6f, 0x67, 0x12,
-	0x2d, 0x0a, 0x04, 0x52, 0x65, 0x61, 0x64, 0x12, 0x10, 0x2e, 0x6c, 0x6f, 0x67, 0x2e, 0x52, 0x65,
-	0x61, 0x64, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x1a, 0x11, 0x2e, 0x6c, 0x6f, 0x67, 0x2e,
-	0x52, 0x65, 0x61, 0x64, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x22, 0x00, 0x12, 0x33,
-	0x0a, 0x06, 0x41, 0x70, 0x70, 0x65, 0x6e, 0x64, 0x12, 0x12, 0x2e, 0x6c, 0x6f, 0x67, 0x2e, 0x41,
-	0x70, 0x70, 0x65, 0x6e, 0x64, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x1a, 0x13, 0x2e, 0x6c,
-	0x6f, 0x67, 0x2e, 0x41, 0x70, 0x70, 0x65, 0x6e, 0x64, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73,
-	0x65, 0x22, 0x00, 0x12, 0x3b, 0x0a, 0x0c, 0x41, 0x70, 0x70, 0x65, 0x6e, 0x64, 0x53, 0x74, 0x72,
-	0x65, 0x61, 0x6d, 0x12, 0x12, 0x2e, 0x6c, 0x6f, 0x67, 0x2e, 0x41, 0x70, 0x70, 0x65, 0x6e, 0x64,
-	0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x1a, 0x13, 0x2e, 0x6c, 0x6f, 0x67, 0x2e, 0x41, 0x70,
-	0x70, 0x65, 0x6e, 0x64, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x22, 0x00, 0x30, 0x01,
-	0x12, 0x37, 0x0a, 0x0a, 0x52, 0x65, 0x61, 0x64, 0x53, 0x74, 0x72, 0x65, 0x61, 0x6d, 0x12, 0x10,
-	0x2e, 0x6c, 0x6f, 0x67, 0x2e, 0x52, 0x65, 0x61, 0x64, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74,
-	0x1a, 0x11, 0x2e, 0x6c, 0x6f, 0x67, 0x2e, 0x52, 0x65, 0x61, 0x64, 0x52, 0x65, 0x73, 0x70, 0x6f,
+	0x33, 0x0a, 0x06, 0x41, 0x70, 0x70, 0x65, 0x6e, 0x64, 0x12, 0x12, 0x2e, 0x6c, 0x6f, 0x67, 0x2e,
+	0x41, 0x70, 0x70, 0x65, 0x6e, 0x64, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x1a, 0x13, 0x2e,
+	0x6c, 0x6f, 0x67, 0x2e, 0x41, 0x70, 0x70, 0x65, 0x6e, 0x64, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e,
+	0x73, 0x65, 0x22, 0x00, 0x12, 0x2d, 0x0a, 0x04, 0x52, 0x65, 0x61, 0x64, 0x12, 0x10, 0x2e, 0x6c,
+	0x6f, 0x67, 0x2e, 0x52, 0x65, 0x61, 0x64, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x1a, 0x11,
+	0x2e, 0x6c, 0x6f, 0x67, 0x2e, 0x52, 0x65, 0x61, 0x64, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73,
+	0x65, 0x22, 0x00, 0x12, 0x35, 0x0a, 0x0a, 0x52, 0x65, 0x61, 0x64, 0x53, 0x74, 0x72, 0x65, 0x61,
+	0x6d, 0x12, 0x10, 0x2e, 0x6c, 0x6f, 0x67, 0x2e, 0x52, 0x65, 0x61, 0x64, 0x52, 0x65, 0x71, 0x75,
+	0x65, 0x73, 0x74, 0x1a, 0x11, 0x2e, 0x6c, 0x6f, 0x67, 0x2e, 0x52, 0x65, 0x61, 0x64, 0x52, 0x65,
+	0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x22, 0x00, 0x30, 0x01, 0x12, 0x3d, 0x0a, 0x0c, 0x41, 0x70,
+	0x70, 0x65, 0x6e, 0x64, 0x53, 0x74, 0x72, 0x65, 0x61, 0x6d, 0x12, 0x12, 0x2e, 0x6c, 0x6f, 0x67,
+	0x2e, 0x41, 0x70, 0x70, 0x65, 0x6e, 0x64, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x1a, 0x13,
+	0x2e, 0x6c, 0x6f, 0x67, 0x2e, 0x41, 0x70, 0x70, 0x65, 0x6e, 0x64, 0x52, 0x65, 0x73, 0x70, 0x6f,
 	0x6e, 0x73, 0x65, 0x22, 0x00, 0x28, 0x01, 0x30, 0x01, 0x42, 0x14, 0x5a, 0x12, 0x69, 0x6e, 0x74,
 	0x65, 0x72, 0x6e, 0x61, 0x6c, 0x2f, 0x6c, 0x6f, 0x67, 0x2f, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x62,
 	0x06, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x33,
@@ -322,22 +322,22 @@ func file_internal_log_proto_log_proto_rawDescGZIP() []byte {
 var file_internal_log_proto_log_proto_msgTypes = make([]protoimpl.MessageInfo, 5)
 var file_internal_log_proto_log_proto_goTypes = []interface{}{
 	(*Record)(nil),         // 0: log.Record
-	(*ReadRequest)(nil),    // 1: log.ReadRequest
-	(*ReadResponse)(nil),   // 2: log.ReadResponse
-	(*AppendRequest)(nil),  // 3: log.AppendRequest
-	(*AppendResponse)(nil), // 4: log.AppendResponse
+	(*AppendRequest)(nil),  // 1: log.AppendRequest
+	(*AppendResponse)(nil), // 2: log.AppendResponse
+	(*ReadRequest)(nil),    // 3: log.ReadRequest
+	(*ReadResponse)(nil),   // 4: log.ReadResponse
 }
 var file_internal_log_proto_log_proto_depIdxs = []int32{
-	0, // 0: log.ReadRequest.record:type_name -> log.Record
-	0, // 1: log.AppendResponse.record:type_name -> log.Record
-	1, // 2: log.Log.Read:input_type -> log.ReadRequest
-	3, // 3: log.Log.Append:input_type -> log.AppendRequest
-	3, // 4: log.Log.AppendStream:input_type -> log.AppendRequest
-	1, // 5: log.Log.ReadStream:input_type -> log.ReadRequest
-	2, // 6: log.Log.Read:output_type -> log.ReadResponse
-	4, // 7: log.Log.Append:output_type -> log.AppendResponse
-	4, // 8: log.Log.AppendStream:output_type -> log.AppendResponse
-	2, // 9: log.Log.ReadStream:output_type -> log.ReadResponse
+	0, // 0: log.AppendRequest.record:type_name -> log.Record
+	0, // 1: log.ReadResponse.record:type_name -> log.Record
+	1, // 2: log.Log.Append:input_type -> log.AppendRequest
+	3, // 3: log.Log.Read:input_type -> log.ReadRequest
+	3, // 4: log.Log.ReadStream:input_type -> log.ReadRequest
+	1, // 5: log.Log.AppendStream:input_type -> log.AppendRequest
+	2, // 6: log.Log.Append:output_type -> log.AppendResponse
+	4, // 7: log.Log.Read:output_type -> log.ReadResponse
+	4, // 8: log.Log.ReadStream:output_type -> log.ReadResponse
+	2, // 9: log.Log.AppendStream:output_type -> log.AppendResponse
 	6, // [6:10] is the sub-list for method output_type
 	2, // [2:6] is the sub-list for method input_type
 	2, // [2:2] is the sub-list for extension type_name
@@ -364,30 +364,6 @@ func file_internal_log_proto_log_proto_init() {
 			}
 		}
 		file_internal_log_proto_log_proto_msgTypes[1].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*ReadRequest); i {
-			case 0:
-				return &v.state
-			case 1:
-				return &v.sizeCache
-			case 2:
-				return &v.unknownFields
-			default:
-				return nil
-			}
-		}
-		file_internal_log_proto_log_proto_msgTypes[2].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*ReadResponse); i {
-			case 0:
-				return &v.state
-			case 1:
-				return &v.sizeCache
-			case 2:
-				return &v.unknownFields
-			default:
-				return nil
-			}
-		}
-		file_internal_log_proto_log_proto_msgTypes[3].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*AppendRequest); i {
 			case 0:
 				return &v.state
@@ -399,8 +375,32 @@ func file_internal_log_proto_log_proto_init() {
 				return nil
 			}
 		}
-		file_internal_log_proto_log_proto_msgTypes[4].Exporter = func(v interface{}, i int) interface{} {
+		file_internal_log_proto_log_proto_msgTypes[2].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*AppendResponse); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_internal_log_proto_log_proto_msgTypes[3].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*ReadRequest); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_internal_log_proto_log_proto_msgTypes[4].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*ReadResponse); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -444,10 +444,10 @@ const _ = grpc.SupportPackageIsVersion6
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://godoc.org/google.golang.org/grpc#ClientConn.NewStream.
 type LogClient interface {
-	Read(ctx context.Context, in *ReadRequest, opts ...grpc.CallOption) (*ReadResponse, error)
 	Append(ctx context.Context, in *AppendRequest, opts ...grpc.CallOption) (*AppendResponse, error)
-	AppendStream(ctx context.Context, in *AppendRequest, opts ...grpc.CallOption) (Log_AppendStreamClient, error)
-	ReadStream(ctx context.Context, opts ...grpc.CallOption) (Log_ReadStreamClient, error)
+	Read(ctx context.Context, in *ReadRequest, opts ...grpc.CallOption) (*ReadResponse, error)
+	ReadStream(ctx context.Context, in *ReadRequest, opts ...grpc.CallOption) (Log_ReadStreamClient, error)
+	AppendStream(ctx context.Context, opts ...grpc.CallOption) (Log_AppendStreamClient, error)
 }
 
 type logClient struct {
@@ -456,15 +456,6 @@ type logClient struct {
 
 func NewLogClient(cc grpc.ClientConnInterface) LogClient {
 	return &logClient{cc}
-}
-
-func (c *logClient) Read(ctx context.Context, in *ReadRequest, opts ...grpc.CallOption) (*ReadResponse, error) {
-	out := new(ReadResponse)
-	err := c.cc.Invoke(ctx, "/log.Log/Read", in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
 }
 
 func (c *logClient) Append(ctx context.Context, in *AppendRequest, opts ...grpc.CallOption) (*AppendResponse, error) {
@@ -476,12 +467,21 @@ func (c *logClient) Append(ctx context.Context, in *AppendRequest, opts ...grpc.
 	return out, nil
 }
 
-func (c *logClient) AppendStream(ctx context.Context, in *AppendRequest, opts ...grpc.CallOption) (Log_AppendStreamClient, error) {
-	stream, err := c.cc.NewStream(ctx, &_Log_serviceDesc.Streams[0], "/log.Log/AppendStream", opts...)
+func (c *logClient) Read(ctx context.Context, in *ReadRequest, opts ...grpc.CallOption) (*ReadResponse, error) {
+	out := new(ReadResponse)
+	err := c.cc.Invoke(ctx, "/log.Log/Read", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
-	x := &logAppendStreamClient{stream}
+	return out, nil
+}
+
+func (c *logClient) ReadStream(ctx context.Context, in *ReadRequest, opts ...grpc.CallOption) (Log_ReadStreamClient, error) {
+	stream, err := c.cc.NewStream(ctx, &_Log_serviceDesc.Streams[0], "/log.Log/ReadStream", opts...)
+	if err != nil {
+		return nil, err
+	}
+	x := &logReadStreamClient{stream}
 	if err := x.ClientStream.SendMsg(in); err != nil {
 		return nil, err
 	}
@@ -491,44 +491,13 @@ func (c *logClient) AppendStream(ctx context.Context, in *AppendRequest, opts ..
 	return x, nil
 }
 
-type Log_AppendStreamClient interface {
-	Recv() (*AppendResponse, error)
-	grpc.ClientStream
-}
-
-type logAppendStreamClient struct {
-	grpc.ClientStream
-}
-
-func (x *logAppendStreamClient) Recv() (*AppendResponse, error) {
-	m := new(AppendResponse)
-	if err := x.ClientStream.RecvMsg(m); err != nil {
-		return nil, err
-	}
-	return m, nil
-}
-
-func (c *logClient) ReadStream(ctx context.Context, opts ...grpc.CallOption) (Log_ReadStreamClient, error) {
-	stream, err := c.cc.NewStream(ctx, &_Log_serviceDesc.Streams[1], "/log.Log/ReadStream", opts...)
-	if err != nil {
-		return nil, err
-	}
-	x := &logReadStreamClient{stream}
-	return x, nil
-}
-
 type Log_ReadStreamClient interface {
-	Send(*ReadRequest) error
 	Recv() (*ReadResponse, error)
 	grpc.ClientStream
 }
 
 type logReadStreamClient struct {
 	grpc.ClientStream
-}
-
-func (x *logReadStreamClient) Send(m *ReadRequest) error {
-	return x.ClientStream.SendMsg(m)
 }
 
 func (x *logReadStreamClient) Recv() (*ReadResponse, error) {
@@ -539,51 +508,64 @@ func (x *logReadStreamClient) Recv() (*ReadResponse, error) {
 	return m, nil
 }
 
+func (c *logClient) AppendStream(ctx context.Context, opts ...grpc.CallOption) (Log_AppendStreamClient, error) {
+	stream, err := c.cc.NewStream(ctx, &_Log_serviceDesc.Streams[1], "/log.Log/AppendStream", opts...)
+	if err != nil {
+		return nil, err
+	}
+	x := &logAppendStreamClient{stream}
+	return x, nil
+}
+
+type Log_AppendStreamClient interface {
+	Send(*AppendRequest) error
+	Recv() (*AppendResponse, error)
+	grpc.ClientStream
+}
+
+type logAppendStreamClient struct {
+	grpc.ClientStream
+}
+
+func (x *logAppendStreamClient) Send(m *AppendRequest) error {
+	return x.ClientStream.SendMsg(m)
+}
+
+func (x *logAppendStreamClient) Recv() (*AppendResponse, error) {
+	m := new(AppendResponse)
+	if err := x.ClientStream.RecvMsg(m); err != nil {
+		return nil, err
+	}
+	return m, nil
+}
+
 // LogServer is the server API for Log service.
 type LogServer interface {
-	Read(context.Context, *ReadRequest) (*ReadResponse, error)
 	Append(context.Context, *AppendRequest) (*AppendResponse, error)
-	AppendStream(*AppendRequest, Log_AppendStreamServer) error
-	ReadStream(Log_ReadStreamServer) error
+	Read(context.Context, *ReadRequest) (*ReadResponse, error)
+	ReadStream(*ReadRequest, Log_ReadStreamServer) error
+	AppendStream(Log_AppendStreamServer) error
 }
 
 // UnimplementedLogServer can be embedded to have forward compatible implementations.
 type UnimplementedLogServer struct {
 }
 
-func (*UnimplementedLogServer) Read(context.Context, *ReadRequest) (*ReadResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method Read not implemented")
-}
 func (*UnimplementedLogServer) Append(context.Context, *AppendRequest) (*AppendResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Append not implemented")
 }
-func (*UnimplementedLogServer) AppendStream(*AppendRequest, Log_AppendStreamServer) error {
-	return status.Errorf(codes.Unimplemented, "method AppendStream not implemented")
+func (*UnimplementedLogServer) Read(context.Context, *ReadRequest) (*ReadResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method Read not implemented")
 }
-func (*UnimplementedLogServer) ReadStream(Log_ReadStreamServer) error {
+func (*UnimplementedLogServer) ReadStream(*ReadRequest, Log_ReadStreamServer) error {
 	return status.Errorf(codes.Unimplemented, "method ReadStream not implemented")
+}
+func (*UnimplementedLogServer) AppendStream(Log_AppendStreamServer) error {
+	return status.Errorf(codes.Unimplemented, "method AppendStream not implemented")
 }
 
 func RegisterLogServer(s *grpc.Server, srv LogServer) {
 	s.RegisterService(&_Log_serviceDesc, srv)
-}
-
-func _Log_Read_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(ReadRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(LogServer).Read(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/log.Log/Read",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(LogServer).Read(ctx, req.(*ReadRequest))
-	}
-	return interceptor(ctx, in, info, handler)
 }
 
 func _Log_Append_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
@@ -604,34 +586,34 @@ func _Log_Append_Handler(srv interface{}, ctx context.Context, dec func(interfac
 	return interceptor(ctx, in, info, handler)
 }
 
-func _Log_AppendStream_Handler(srv interface{}, stream grpc.ServerStream) error {
-	m := new(AppendRequest)
-	if err := stream.RecvMsg(m); err != nil {
-		return err
+func _Log_Read_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ReadRequest)
+	if err := dec(in); err != nil {
+		return nil, err
 	}
-	return srv.(LogServer).AppendStream(m, &logAppendStreamServer{stream})
-}
-
-type Log_AppendStreamServer interface {
-	Send(*AppendResponse) error
-	grpc.ServerStream
-}
-
-type logAppendStreamServer struct {
-	grpc.ServerStream
-}
-
-func (x *logAppendStreamServer) Send(m *AppendResponse) error {
-	return x.ServerStream.SendMsg(m)
+	if interceptor == nil {
+		return srv.(LogServer).Read(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/log.Log/Read",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(LogServer).Read(ctx, req.(*ReadRequest))
+	}
+	return interceptor(ctx, in, info, handler)
 }
 
 func _Log_ReadStream_Handler(srv interface{}, stream grpc.ServerStream) error {
-	return srv.(LogServer).ReadStream(&logReadStreamServer{stream})
+	m := new(ReadRequest)
+	if err := stream.RecvMsg(m); err != nil {
+		return err
+	}
+	return srv.(LogServer).ReadStream(m, &logReadStreamServer{stream})
 }
 
 type Log_ReadStreamServer interface {
 	Send(*ReadResponse) error
-	Recv() (*ReadRequest, error)
 	grpc.ServerStream
 }
 
@@ -643,8 +625,26 @@ func (x *logReadStreamServer) Send(m *ReadResponse) error {
 	return x.ServerStream.SendMsg(m)
 }
 
-func (x *logReadStreamServer) Recv() (*ReadRequest, error) {
-	m := new(ReadRequest)
+func _Log_AppendStream_Handler(srv interface{}, stream grpc.ServerStream) error {
+	return srv.(LogServer).AppendStream(&logAppendStreamServer{stream})
+}
+
+type Log_AppendStreamServer interface {
+	Send(*AppendResponse) error
+	Recv() (*AppendRequest, error)
+	grpc.ServerStream
+}
+
+type logAppendStreamServer struct {
+	grpc.ServerStream
+}
+
+func (x *logAppendStreamServer) Send(m *AppendResponse) error {
+	return x.ServerStream.SendMsg(m)
+}
+
+func (x *logAppendStreamServer) Recv() (*AppendRequest, error) {
+	m := new(AppendRequest)
 	if err := x.ServerStream.RecvMsg(m); err != nil {
 		return nil, err
 	}
@@ -656,23 +656,23 @@ var _Log_serviceDesc = grpc.ServiceDesc{
 	HandlerType: (*LogServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{
-			MethodName: "Read",
-			Handler:    _Log_Read_Handler,
-		},
-		{
 			MethodName: "Append",
 			Handler:    _Log_Append_Handler,
+		},
+		{
+			MethodName: "Read",
+			Handler:    _Log_Read_Handler,
 		},
 	},
 	Streams: []grpc.StreamDesc{
 		{
-			StreamName:    "AppendStream",
-			Handler:       _Log_AppendStream_Handler,
+			StreamName:    "ReadStream",
+			Handler:       _Log_ReadStream_Handler,
 			ServerStreams: true,
 		},
 		{
-			StreamName:    "ReadStream",
-			Handler:       _Log_ReadStream_Handler,
+			StreamName:    "AppendStream",
+			Handler:       _Log_AppendStream_Handler,
 			ServerStreams: true,
 			ClientStreams: true,
 		},
