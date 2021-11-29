@@ -72,7 +72,7 @@ func (s *grpcServer) ReadStream(
 		case <-stream.Context().Done():
 			return nil
 		default:
-			res, err := s.Consume(stream.Context(), req)
+			res, err := s.Read(stream.Context(), req)
 			switch err.(type) {
 			case nil:
 				continue

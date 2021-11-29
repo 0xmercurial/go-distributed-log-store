@@ -4,10 +4,6 @@ package log;  //
 
 option go_package = "internal/log/proto";
 
-
-
-
-
 // Message(s) definitions
 message Record {
     bytes value = 1;
