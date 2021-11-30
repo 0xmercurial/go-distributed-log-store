@@ -1,7 +1,6 @@
 package logcomponents
 
 import (
-	"fmt"
 	"io"
 	"io/ioutil"
 	"logstore/internal/log/proto"
@@ -127,7 +126,7 @@ func (l *Log) Read(off uint64) (*proto.Record, error) {
 		}
 	}
 	if s == nil || s.nextOffset <= off {
-		return nil, fmt.Errorf("offset of of range: %d", off)
+		return nil, proto.ErrOffOutOfRange{Offset: off}
 	}
 	return s.Read(off)
 }

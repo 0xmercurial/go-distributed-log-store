@@ -48,7 +48,8 @@ func TestOutOfRangeErr(t *testing.T) {
 	assert.NoError(t, err)
 	read, err := log.Read(1) // should fail w/ fresh log
 	assert.Nil(t, read)
-	assert.Error(t, err)
+	protoErr := err.(prolog.ErrOffOutOfRange) //asserting type of error
+	assert.Equal(t, uint64(1), protoErr.Offset)
 }
 
 func TestInitExisting(t *testing.T) {
