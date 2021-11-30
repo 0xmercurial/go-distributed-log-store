@@ -3,6 +3,8 @@ package server
 import (
 	"context"
 	"logstore/internal/log/proto"
+
+	"google.golang.org/grpc"
 )
 
 type CommitLog interface {
@@ -12,6 +14,16 @@ type CommitLog interface {
 
 type Config struct {
 	CommitLog CommitLog
+}
+
+func NewGRPCServer(config *Config) (*grpc.Server, error) {
+	grpcSrv := grpc.NewServer()
+	srv, err := newGrpcServer(config)
+	if err != nil {
+		return nil, err
+	}
+	proto.RegisterLogServer(grpcSrv, srv)
+	return grpcSrv, nil
 }
 
 type grpcServer struct {
@@ -37,7 +49,7 @@ func (s *grpcServer) Append(
 }
 
 func (s *grpcServer) AppendStream(
-	stream *proto.Log_AppendStreamServer,
+	stream proto.Log_AppendStreamServer, //interface, not pointer to interface
 ) error {
 	for {
 		req, err := stream.Recv()
