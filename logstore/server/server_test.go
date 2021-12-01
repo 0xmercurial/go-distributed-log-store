@@ -61,9 +61,9 @@ func TestServer(t *testing.T) {
 		client proto.LogClient,
 		config *Config,
 	){
-		"unary success":  testUnaryAppendRead,
-		"stream success": testStreamAppendRead,
-		//"read out of bounds": testOOBRead,
+		"unary success":      testUnaryAppendRead,
+		"stream success":     testStreamAppendRead,
+		"read out of bounds": testOOBRead,
 	} {
 		t.Run(scenario, func(t *testing.T) {
 			client, config, teardown := setupTest(t, nil)
@@ -80,11 +80,11 @@ func testUnaryAppendRead(
 ) {
 	ctx := context.Background()
 
-	want := &proto.Record{
+	expected := &proto.Record{
 		Value: []byte("record"),
 	}
 	appReq := &proto.AppendRequest{
-		Record: want,
+		Record: expected,
 	}
 	append, err := client.Append(ctx, appReq)
 	assert.NoError(t, err)
@@ -94,8 +94,8 @@ func testUnaryAppendRead(
 	}
 	read, err := client.Read(ctx, readReq)
 	assert.NoError(t, err)
-	assert.Equal(t, want.Value, read.Record.Value)
-	assert.Equal(t, want.Offset, read.Record.Offset)
+	assert.Equal(t, expected.Value, read.Record.Value)
+	assert.Equal(t, expected.Offset, read.Record.Offset)
 }
 
 func testStreamAppendRead(
@@ -154,4 +154,36 @@ func testStreamAppendRead(
 			assert.Equal(t, res.Record, expected)
 		}
 	}
+}
+
+func testOOBRead(
+	t *testing.T,
+	client proto.LogClient,
+	config *Config,
+) {
+	ctx := context.Background()
+
+	record := &proto.Record{
+		Value: []byte("record"),
+	}
+	appReq := &proto.AppendRequest{
+		Record: record,
+	}
+	append, err := client.Append(ctx, appReq)
+	assert.NoError(t, err)
+
+	readReq := &proto.ReadRequest{
+		Offset: append.Offset + 1,
+	}
+	read, err := client.Read(ctx, readReq)
+	if read != nil {
+		t.Error("read not nil")
+	}
+
+	expected := grpc.Code(proto.ErrOffOutOfRange{}.GRPCStatus().Err())
+	actual := grpc.Code(err)
+	if actual != expected {
+		t.Fatalf("actual err: %v, expected: %v", actual, expected)
+	}
+
 }
