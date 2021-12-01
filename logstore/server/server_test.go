@@ -61,8 +61,8 @@ func TestServer(t *testing.T) {
 		client proto.LogClient,
 		config *Config,
 	){
-		"unary success": testUnaryAppendRead,
-		//"stream success":     testStreamAppendRead,
+		"unary success":  testUnaryAppendRead,
+		"stream success": testStreamAppendRead,
 		//"read out of bounds": testOOBRead,
 	} {
 		t.Run(scenario, func(t *testing.T) {
@@ -73,7 +73,11 @@ func TestServer(t *testing.T) {
 	}
 }
 
-func testUnaryAppendRead(t *testing.T, client proto.LogClient, config *Config) {
+func testUnaryAppendRead(
+	t *testing.T,
+	client proto.LogClient,
+	config *Config,
+) {
 	ctx := context.Background()
 
 	want := &proto.Record{
@@ -92,4 +96,62 @@ func testUnaryAppendRead(t *testing.T, client proto.LogClient, config *Config) {
 	assert.NoError(t, err)
 	assert.Equal(t, want.Value, read.Record.Value)
 	assert.Equal(t, want.Offset, read.Record.Offset)
+}
+
+func testStreamAppendRead(
+	t *testing.T,
+	client proto.LogClient,
+	config *Config,
+) {
+	ctx := context.Background()
+
+	records := []*proto.Record{
+		{
+			Value:  []byte("uno"),
+			Offset: 0,
+		}, {
+			Value:  []byte("dos"),
+			Offset: 1,
+		},
+	}
+
+	{
+		stream, err := client.AppendStream(ctx)
+		assert.NoError(t, err)
+
+		for offset, record := range records {
+			apdReq := &proto.AppendRequest{
+				Record: record,
+			}
+			err = stream.Send(apdReq)
+			assert.NoError(t, err)
+
+			res, err := stream.Recv()
+			assert.NoError(t, err)
+			if res.Offset != uint64(offset) {
+				t.Fatalf(
+					"actual offset: %d, expected %d",
+					res.Offset,
+					offset,
+				)
+			}
+		}
+	}
+
+	{
+		readReq := &proto.ReadRequest{Offset: 0}
+		stream, err := client.ReadStream(ctx, readReq)
+		assert.NoError(t, err)
+
+		for i, record := range records {
+			res, err := stream.Recv()
+
+			assert.NoError(t, err)
+			expected := &proto.Record{
+				Value:  record.Value,
+				Offset: uint64(i),
+			}
+			assert.Equal(t, res.Record, expected)
+		}
+	}
 }

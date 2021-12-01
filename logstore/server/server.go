@@ -87,7 +87,6 @@ func (s *grpcServer) ReadStream(
 			res, err := s.Read(stream.Context(), req)
 			switch err.(type) {
 			case nil:
-				continue
 			case proto.ErrOffOutOfRange:
 				continue
 			default:
