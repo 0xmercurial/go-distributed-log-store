@@ -22,6 +22,10 @@ type Log struct {
 	segments      []*segment
 }
 
+/*
+NewLog return a pointer to a Log based on the input config. Logs
+are writtern to file specified in directory.
+*/
 func NewLog(dir string, c Config) (*Log, error) {
 
 	if c.Segment.MaxStoreBytes == 0 {
