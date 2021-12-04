@@ -136,7 +136,7 @@ func (l *Log) Read(off uint64) (*proto.Record, error) {
 }
 
 /*
-Close
+Close down the log starting by closing individual segments.
 */
 func (l *Log) Close() error {
 	l.mu.Lock() //ensure no more reads/writes occur
