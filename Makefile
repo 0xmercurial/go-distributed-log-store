@@ -20,7 +20,6 @@ gencert:
 .PHONY: test
 test:
 	export CONFIG_DIR=${CONFIG_PATH}
-	echo ${CONFIG_DIR}
 	go test -race ./...
 
 
