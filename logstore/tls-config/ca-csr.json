@@ -1,0 +1,16 @@
+{
+    "CN": "ZK CA", 
+    "key": {
+        "algo": "rsa",
+        "size": 2048
+    },
+    "names": [
+        {
+            "C": "US",
+            "L": "NYC",
+            "ST": "New York",
+            "O": "ZK Org",
+            "OU": "ZK CA Services"
+        }
+    ]
+}
