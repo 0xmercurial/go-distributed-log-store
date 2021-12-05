@@ -9,14 +9,16 @@
                     "signing",
                     "key encipherment",
                     "server auth"
-                ]
+                ],
+                "expiry": "8760h"
             },
             "client": {
                 "usages": [
                     "signing",
                     "key encipherment",
                     "client auth"
-                ]
+                ],
+                "expiry": "8760h"
             }
         }
     }

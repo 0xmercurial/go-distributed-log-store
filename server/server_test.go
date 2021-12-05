@@ -3,13 +3,16 @@ package server
 import (
 	"context"
 	"io/ioutil"
+	tlscf "logstore/internal/config"
 	"logstore/internal/log/proto"
 	log "logstore/internal/logcomponents"
 	"net"
+	"os"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
 	"google.golang.org/grpc"
+	"google.golang.org/grpc/credentials"
 )
 
 func setupTest(t *testing.T, fn func(*Config)) (
@@ -18,14 +21,37 @@ func setupTest(t *testing.T, fn func(*Config)) (
 	teardown func(),
 ) {
 	t.Helper() //marks func as a helper (logs will be ignored)
-	listener, err := net.Listen("tcp", ":0")
+	listener, err := net.Listen("tcp", "127.0.0.1:0")
 	assert.NoError(t, err)
 
-	dialOps := []grpc.DialOption{grpc.WithInsecure()}
-	clientConn, err := grpc.Dial(listener.Addr().String(), dialOps...)
+	//Client Setup
+	clientInputConf := tlscf.TLSConfig{CAFile: tlscf.CAFile}
+	t.Log("CAFile: ", tlscf.CAFile)
+	dir, _ := os.Getwd()
+	t.Log(dir)
+	clientTFSConfig, err := tlscf.SetupFromTLSConfig(clientInputConf)
 	assert.NoError(t, err)
 
-	dir, err := ioutil.TempDir("", "srv-test")
+	clientCreds := credentials.NewTLS(clientTFSConfig)
+	clientConn, err := grpc.Dial(
+		listener.Addr().String(),
+		grpc.WithTransportCredentials(clientCreds),
+	)
+	assert.NoError(t, err)
+	client = proto.NewLogClient(clientConn)
+
+	//Server Setup
+	serverInputConf := tlscf.TLSConfig{
+		CertFile:      tlscf.ServerCertFile,
+		KeyFile:       tlscf.ServerKeyFile,
+		CAFile:        tlscf.CAFile,
+		ServerAddress: listener.Addr().String(),
+	}
+	serverTLSConfig, err := tlscf.SetupFromTLSConfig(serverInputConf)
+	assert.NoError(t, err)
+	serverCreds := credentials.NewTLS(serverTLSConfig)
+
+	dir, err = ioutil.TempDir("", "srv-test")
 	assert.NoError(t, err)
 
 	commitLog, err := log.NewLog(dir, log.Config{})
@@ -38,14 +64,15 @@ func setupTest(t *testing.T, fn func(*Config)) (
 		fn(config)
 	}
 
-	srv, err := NewGRPCServer(config)
+	srv, err := NewGRPCServer(
+		config,
+		grpc.Creds(serverCreds),
+	)
 	assert.NoError(t, err)
 
 	go func() {
 		srv.Serve(listener)
 	}()
-
-	client = proto.NewLogClient(clientConn)
 
 	return client, config, func() { //returning an anon func that shutsdown srv
 		srv.Stop()

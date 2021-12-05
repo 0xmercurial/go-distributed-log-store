@@ -1,8 +1,9 @@
-CONFIG_PATH=${HOME}/.logstore/
+CONFIG_PATH="secrets"
 
 .PHONY: init
 init:
 	mkdir -p ${CONFIG_PATH}
+	export CONFIG_DIR=${CONFIG_PATH}
 
 .PHONY: gencert
 gencert:
@@ -15,9 +16,11 @@ gencert:
 		-config=tls-config/ca-config.json \
 		-profile=server \
 		tls-config/server-csr.json | cfssljson -bare server
-
+	mv *.pem *.csr ${CONFIG_PATH}
 .PHONY: test
 test:
+	export CONFIG_DIR=${CONFIG_PATH}
+	echo ${CONFIG_DIR}
 	go test -race ./...
 
 

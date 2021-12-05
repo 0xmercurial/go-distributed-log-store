@@ -8,16 +8,17 @@ import (
 var (
 	CAFile         = configFile("ca.pem")
 	ServerCertFile = configFile("server.pem")
-	ServerKeyFile  = configFile("server-key.pm")
+	ServerKeyFile  = configFile("server-key.pem")
 )
 
 func configFile(filename string) string {
 	if dir := os.Getenv("CONFIG_DIR"); dir != "" {
-		return filepath.Join(dir, filename)
+		absDir, _ := filepath.Abs("../" + dir + "/" + filename)
+		return absDir
 	}
 	homeDir, err := os.UserHomeDir()
 	if err != nil {
 		panic(err)
 	}
-	return filepath.Join(homeDir, ".logstore", filename)
+	return filepath.Join(homeDir, "secrets", filename)
 }
