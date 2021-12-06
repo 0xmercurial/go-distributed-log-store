@@ -1,9 +1,11 @@
-CONFIG_PATH="secrets"
+.EXPORT_ALL_VARIABLES:
+DIR=secrets
+CONFIG_PATH=$(shell pwd)
+CONFIG_DIR=${CONFIG_PATH}/${DIR}
 
 .PHONY: init
 init:
-	mkdir -p ${CONFIG_PATH}
-	export CONFIG_DIR=${CONFIG_PATH}
+	mkdir -p ${CONFIG_DIR}
 
 .PHONY: gencert
 gencert:
@@ -22,13 +24,13 @@ gencert:
 		-ca-key=ca-key.pem \
 		-config=tls-config/ca-config.json \
 		-profile=client \
-		tls-config/client-csr.json | cfssljson -bare server
+		tls-config/client-csr.json | cfssljson -bare client
 
-	mv *.pem *.csr ${CONFIG_PATH}
-	
+	mv *.pem *.csr secrets
+
 .PHONY: test
 test:
-	export CONFIG_DIR=${CONFIG_PATH}
+
 	go test -race ./...
 
 

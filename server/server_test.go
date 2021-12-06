@@ -25,7 +25,12 @@ func setupTest(t *testing.T, fn func(*Config)) (
 	assert.NoError(t, err)
 
 	//Client Setup
-	clientInputConf := tlscf.TLSConfig{CAFile: tlscf.CAFile}
+	clientInputConf := tlscf.TLSConfig{
+		CertFile: tlscf.ClientCertFile,
+		KeyFile:  tlscf.ClientKeyFile,
+		CAFile:   tlscf.CAFile,
+	}
+	t.Log("Directory: ", os.Getenv("CONFIG_DIR"))
 	t.Log("CAFile: ", tlscf.CAFile)
 	dir, _ := os.Getwd()
 	t.Log(dir)
@@ -46,6 +51,7 @@ func setupTest(t *testing.T, fn func(*Config)) (
 		KeyFile:       tlscf.ServerKeyFile,
 		CAFile:        tlscf.CAFile,
 		ServerAddress: listener.Addr().String(),
+		Server:        true,
 	}
 	serverTLSConfig, err := tlscf.SetupFromTLSConfig(serverInputConf)
 	assert.NoError(t, err)
