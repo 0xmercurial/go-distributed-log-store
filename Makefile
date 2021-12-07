@@ -24,7 +24,16 @@ gencert:
 		-ca-key=ca-key.pem \
 		-config=tls-config/ca-config.json \
 		-profile=client \
-		tls-config/client-csr.json | cfssljson -bare client
+		-cn="root" \
+		tls-config/client-csr.json | cfssljson -bare root-client
+
+	cfssl gencert \
+		-ca=ca.pem \
+		-ca-key=ca-key.pem \
+		-config=tls-config/ca-config.json \
+		-profile=client \
+		-cn="nobody" \
+		tls-config/client-csr.json | cfssljson -bare nobody-client
 
 	mv *.pem *.csr secrets
 
