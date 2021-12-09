@@ -7,7 +7,6 @@ import (
 	"logstore/internal/log/proto"
 	log "logstore/internal/logcomponents"
 	"net"
-	"os"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -25,25 +24,6 @@ func setupTest(t *testing.T, fn func(*Config)) (
 	assert.NoError(t, err)
 
 	//Client Setup
-	clientInputConf := tlscf.TLSConfig{
-		CertFile: tlscf.ClientCertFile,
-		KeyFile:  tlscf.ClientKeyFile,
-		CAFile:   tlscf.CAFile,
-	}
-	t.Log("Directory: ", os.Getenv("CONFIG_DIR"))
-	t.Log("CAFile: ", tlscf.CAFile)
-	dir, _ := os.Getwd()
-	t.Log(dir)
-	clientTFSConfig, err := tlscf.SetupFromTLSConfig(clientInputConf)
-	assert.NoError(t, err)
-
-	clientCreds := credentials.NewTLS(clientTFSConfig)
-	clientConn, err := grpc.Dial(
-		listener.Addr().String(),
-		grpc.WithTransportCredentials(clientCreds),
-	)
-	assert.NoError(t, err)
-	client = proto.NewLogClient(clientConn)
 
 	//Server Setup
 	serverInputConf := tlscf.TLSConfig{
@@ -57,7 +37,7 @@ func setupTest(t *testing.T, fn func(*Config)) (
 	assert.NoError(t, err)
 	serverCreds := credentials.NewTLS(serverTLSConfig)
 
-	dir, err = ioutil.TempDir("", "srv-test")
+	dir, err := ioutil.TempDir("", "srv-test")
 	assert.NoError(t, err)
 
 	commitLog, err := log.NewLog(dir, log.Config{})
@@ -82,10 +62,27 @@ func setupTest(t *testing.T, fn func(*Config)) (
 
 	return client, config, func() { //returning an anon func that shutsdown srv
 		srv.Stop()
-		clientConn.Close()
+		//clientConn.Close()
 		listener.Close()
 		commitLog.Remove()
 	}
+}
+
+func newClient(certPath, keyPath string, t *testing.T) (
+	*grpc.ClientConn,
+	proto.LogClient,
+	[]grpc.DialOption,
+) {
+	config := tlscf.TLSConfig{
+		CertFile: certPath,
+		KeyFile:  keyPath,
+		CAFile:   tlscf.CAFile,
+		Server:   false,
+	}
+	tlsConfig, err := tlscf.SetupFromTLSConfig(config)
+	assert.NoError(t, err)
+
+	tlsCreds := credentials.NewTLS(tlsConfig)
 }
 
 func TestServer(t *testing.T) {
