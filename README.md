@@ -7,3 +7,5 @@ To test, run
 ```
 make init gencert test
 ```
+
+Implements Raft vis Serf
