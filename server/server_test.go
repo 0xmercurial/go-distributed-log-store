@@ -24,6 +24,29 @@ func setupTest(t *testing.T, fn func(*Config)) (
 	assert.NoError(t, err)
 
 	//Client Setup
+	newClient := func(certPath, keyPath string) (
+		*grpc.ClientConn,
+		proto.LogClient,
+		[]grpc.DialOption,
+	) {
+		config := tlscf.TLSConfig{
+			CertFile: certPath,
+			KeyFile:  keyPath,
+			CAFile:   tlscf.CAFile,
+			Server:   false,
+		}
+		tlsConfig, err := tlscf.SetupFromTLSConfig(config)
+		assert.NoError(t, err)
+
+		tlsCreds := credentials.NewTLS(tlsConfig)
+		opts := []grpc.DialOption{grpc.WithTransportCredentials(tlsCreds)}
+		conn, err := grpc.Dial(listener.Addr().String(), opts...)
+		assert.NoError(t, err)
+		client := proto.NewLogClient(conn)
+		return conn, client, opts
+	}
+
+	newClient("", "") //dummy call
 
 	//Server Setup
 	serverInputConf := tlscf.TLSConfig{
@@ -68,22 +91,24 @@ func setupTest(t *testing.T, fn func(*Config)) (
 	}
 }
 
-func newClient(certPath, keyPath string, t *testing.T) (
-	*grpc.ClientConn,
-	proto.LogClient,
-	[]grpc.DialOption,
-) {
-	config := tlscf.TLSConfig{
-		CertFile: certPath,
-		KeyFile:  keyPath,
-		CAFile:   tlscf.CAFile,
-		Server:   false,
-	}
-	tlsConfig, err := tlscf.SetupFromTLSConfig(config)
-	assert.NoError(t, err)
+// func newClient(certPath, keyPath string, t *testing.T) (
+// 	*grpc.ClientConn,
+// 	proto.LogClient,
+// 	[]grpc.DialOption,
+// ) {
+// 	config := tlscf.TLSConfig{
+// 		CertFile: certPath,
+// 		KeyFile:  keyPath,
+// 		CAFile:   tlscf.CAFile,
+// 		Server:   false,
+// 	}
+// 	tlsConfig, err := tlscf.SetupFromTLSConfig(config)
+// 	assert.NoError(t, err)
 
-	tlsCreds := credentials.NewTLS(tlsConfig)
-}
+// 	tlsCreds := credentials.NewTLS(tlsConfig)
+// 	opts := []grpc.DialOption{grpc.WithTransportCredentials(tlsCreds)}
+// 	conn, err := grpc.Dial(l)
+// }
 
 func TestServer(t *testing.T) {
 	for scenario, fn := range map[string]func(
