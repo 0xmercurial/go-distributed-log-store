@@ -46,7 +46,15 @@ func setupTest(t *testing.T, fn func(*Config)) (
 		return conn, client, opts
 	}
 
-	newClient("", "") //dummy call
+	rootConn, rootClient, _ := newClient(
+		tlscf.RootClientCertFile,
+		tlscf.RootClientKeyFile,
+	)
+
+	nobodyConn, nobodyClient, _ := newClient(
+		tlscf.NobodyClientCertFile,
+		tlscf.NobodyClientKeyFile,
+	)
 
 	//Server Setup
 	serverInputConf := tlscf.TLSConfig{
