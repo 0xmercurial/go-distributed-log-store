@@ -15,7 +15,8 @@ import (
 )
 
 func setupTest(t *testing.T, fn func(*Config)) (
-	client proto.LogClient,
+	rootClient proto.LogClient,
+	nobodyClient proto.LogClient,
 	config *Config,
 	teardown func(),
 ) {
@@ -91,37 +92,21 @@ func setupTest(t *testing.T, fn func(*Config)) (
 		srv.Serve(listener)
 	}()
 
-	return client, config, func() { //returning an anon func that shutsdown srv
+	return rootClient, nobodyClient, config, func() {
+		//returning an anon func that shutsdown srv
 		srv.Stop()
-		//clientConn.Close()
+		rootConn.Close()
+		nobodyConn.Close()
 		listener.Close()
-		commitLog.Remove()
+		//commitLog.Remove()
 	}
 }
-
-// func newClient(certPath, keyPath string, t *testing.T) (
-// 	*grpc.ClientConn,
-// 	proto.LogClient,
-// 	[]grpc.DialOption,
-// ) {
-// 	config := tlscf.TLSConfig{
-// 		CertFile: certPath,
-// 		KeyFile:  keyPath,
-// 		CAFile:   tlscf.CAFile,
-// 		Server:   false,
-// 	}
-// 	tlsConfig, err := tlscf.SetupFromTLSConfig(config)
-// 	assert.NoError(t, err)
-
-// 	tlsCreds := credentials.NewTLS(tlsConfig)
-// 	opts := []grpc.DialOption{grpc.WithTransportCredentials(tlsCreds)}
-// 	conn, err := grpc.Dial(l)
-// }
 
 func TestServer(t *testing.T) {
 	for scenario, fn := range map[string]func(
 		t *testing.T,
-		client proto.LogClient,
+		rootClient proto.LogClient,
+		nobodyClient proto.LogClient,
 		config *Config,
 	){
 		"unary success":      testUnaryAppendRead,
@@ -129,16 +114,16 @@ func TestServer(t *testing.T) {
 		"read out of bounds": testOOBRead,
 	} {
 		t.Run(scenario, func(t *testing.T) {
-			client, config, teardown := setupTest(t, nil)
+			rootClient, nobodyClient, config, teardown := setupTest(t, nil)
 			defer teardown()
-			fn(t, client, config)
+			fn(t, rootClient, nobodyClient, config)
 		})
 	}
 }
 
 func testUnaryAppendRead(
 	t *testing.T,
-	client proto.LogClient,
+	client, _ proto.LogClient,
 	config *Config,
 ) {
 	ctx := context.Background()
@@ -163,7 +148,7 @@ func testUnaryAppendRead(
 
 func testStreamAppendRead(
 	t *testing.T,
-	client proto.LogClient,
+	client, _ proto.LogClient,
 	config *Config,
 ) {
 	ctx := context.Background()
@@ -221,7 +206,7 @@ func testStreamAppendRead(
 
 func testOOBRead(
 	t *testing.T,
-	client proto.LogClient,
+	client, _ proto.LogClient,
 	config *Config,
 ) {
 	ctx := context.Background()
