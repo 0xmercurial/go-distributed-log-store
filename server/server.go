@@ -7,14 +7,25 @@ import (
 	"google.golang.org/grpc"
 )
 
+type Config struct {
+	CommitLog  CommitLog
+	Authorizer Authorizer
+}
+
 type CommitLog interface {
 	Append(*proto.Record) (uint64, error)
 	Read(uint64) (*proto.Record, error)
 }
 
-type Config struct {
-	CommitLog CommitLog
+type Authorizer interface {
+	Authorize(subject, object, action string)
 }
+
+const (
+	objWildCard  = "*"
+	appendAction = "append"
+	readAction   = "read"
+)
 
 func NewGRPCServer(config *Config, opts ...grpc.ServerOption) (
 	*grpc.Server,
