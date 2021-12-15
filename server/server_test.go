@@ -11,7 +11,9 @@ import (
 
 	"github.com/stretchr/testify/assert"
 	"google.golang.org/grpc"
+	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/credentials"
+	"google.golang.org/grpc/status"
 )
 
 func setupTest(t *testing.T, fn func(*Config)) (
@@ -56,7 +58,6 @@ func setupTest(t *testing.T, fn func(*Config)) (
 		tlscf.NobodyClientCertFile,
 		tlscf.NobodyClientKeyFile,
 	)
-
 	//Server Setup
 	serverInputConf := tlscf.TLSConfig{
 		CertFile:      tlscf.ServerCertFile,
@@ -93,12 +94,10 @@ func setupTest(t *testing.T, fn func(*Config)) (
 	}()
 
 	return rootClient, nobodyClient, config, func() {
-		//returning an anon func that shutsdown srv
 		srv.Stop()
 		rootConn.Close()
 		nobodyConn.Close()
 		listener.Close()
-		//commitLog.Remove()
 	}
 }
 
@@ -112,6 +111,7 @@ func TestServer(t *testing.T) {
 		"unary success":      testUnaryAppendRead,
 		"stream success":     testStreamAppendRead,
 		"read out of bounds": testOOBRead,
+		"unauthz failure":    testNoAuthZ,
 	} {
 		t.Run(scenario, func(t *testing.T) {
 			rootClient, nobodyClient, config, teardown := setupTest(t, nil)
@@ -234,4 +234,38 @@ func testOOBRead(
 		t.Fatalf("actual err: %v, expected: %v", actual, expected)
 	}
 
+}
+
+func testNoAuthZ(
+	t *testing.T,
+	_,
+	client proto.LogClient,
+	config *Config,
+) {
+	ctx := context.Background()
+
+	record := &proto.Record{
+		Value: []byte("record"),
+	}
+	appReq := &proto.AppendRequest{
+		Record: record,
+	}
+	append, err := client.Append(ctx, appReq)
+	assert.Nil(t, append)
+
+	actualCode, expectedCode := status.Code(err), codes.PermissionDenied
+	if actualCode != expectedCode {
+		t.Fatalf("actual: %d, expected: %d", actualCode, expectedCode)
+	}
+
+	readReq := &proto.ReadRequest{
+		Offset: 0,
+	}
+	read, err := client.Read(ctx, readReq)
+	assert.Nil(t, read)
+
+	actualCode, expectedCode = status.Code(err), codes.PermissionDenied
+	if actualCode != expectedCode {
+		t.Fatalf("actual: %d, expected: %d", actualCode, expectedCode)
+	}
 }
