@@ -18,7 +18,7 @@ type CommitLog interface {
 }
 
 type Authorizer interface {
-	Authorize(subject, object, action string)
+	Authorize(subject, object, action string) error
 }
 
 const (
@@ -55,6 +55,13 @@ func (s *grpcServer) Append(
 	ctx context.Context,
 	req *proto.AppendRequest,
 ) (*proto.AppendResponse, error) {
+	if err := s.Authorizer.Authorize(
+		"subject",
+		objWildCard,
+		readAction,
+	); err != nil {
+		return nil, err
+	}
 	off, err := s.CommitLog.Append(req.Record)
 	if err != nil {
 		return nil, err
