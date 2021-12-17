@@ -56,7 +56,7 @@ func (s *grpcServer) Append(
 	req *proto.AppendRequest,
 ) (*proto.AppendResponse, error) {
 	if err := s.Authorizer.Authorize(
-		"subject",
+		subject(ctx),
 		objWildCard,
 		readAction,
 	); err != nil {
@@ -89,6 +89,13 @@ func (s *grpcServer) AppendStream(
 
 func (s *grpcServer) Read(ctx context.Context, req *proto.ReadRequest) (
 	*proto.ReadResponse, error) {
+	if err := s.Authorizer.Authorize(
+		subject(ctx),
+		objWildCard,
+		readAction,
+	); err != nil {
+		return nil, err
+	}
 	record, err := s.CommitLog.Read(req.Offset)
 	if err != nil {
 		return nil, err
