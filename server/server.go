@@ -5,6 +5,10 @@ import (
 	"logstore/internal/log/proto"
 
 	"google.golang.org/grpc"
+	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/credentials"
+	"google.golang.org/grpc/peer"
+	"google.golang.org/grpc/status"
 )
 
 type Config struct {
@@ -20,6 +24,8 @@ type CommitLog interface {
 type Authorizer interface {
 	Authorize(subject, object, action string) error
 }
+
+type subjectContextKey struct{}
 
 const (
 	objWildCard  = "*"
@@ -58,7 +64,7 @@ func (s *grpcServer) Append(
 	if err := s.Authorizer.Authorize(
 		subject(ctx),
 		objWildCard,
-		readAction,
+		appendAction,
 	); err != nil {
 		return nil, err
 	}
@@ -126,4 +132,24 @@ func (s *grpcServer) ReadStream(
 			req.Offset++
 		}
 	}
+}
+
+func authenticate(ctx context.Context) (context.Context, error) {
+	peer, ok := peer.FromContext(ctx)
+	if !ok {
+		return ctx, status.New(
+			codes.Unknown,
+			"couldn't find peer info",
+		).Err()
+	}
+
+	if peer.AuthInfo == nil {
+		return context.WithValue(ctx, subjectContextKey{}, ""), nil
+	}
+
+	tlsInfo := peer.AuthInfo.(credentials.TLSInfo)
+	subject := tlsInfo.State.VerifiedChains[0][0].Subject.CommonName
+	ctx = context.WithValue(ctx, subjectContextKey{}, subject)
+
+	return ctx, nil
 }
