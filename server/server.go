@@ -4,6 +4,8 @@ import (
 	"context"
 	"logstore/internal/log/proto"
 
+	grpc_middleware "github.com/grpc-ecosystem/go-grpc-middleware"
+	grpc_auth "github.com/grpc-ecosystem/go-grpc-middleware/auth"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/credentials"
@@ -37,6 +39,19 @@ func NewGRPCServer(config *Config, opts ...grpc.ServerOption) (
 	*grpc.Server,
 	error,
 ) {
+
+	//Stream Interceptor
+	streamSrvIntr := grpc_auth.StreamServerInterceptor(authenticate)
+	chainStreamSrv := grpc_middleware.ChainStreamServer(streamSrvIntr)
+	streamIntr := grpc.StreamInterceptor(chainStreamSrv)
+
+	//Unary Interceptor
+	unaryStreamIntr := grpc_auth.UnaryServerInterceptor(authenticate)
+	unaryChainSrv := grpc_middleware.ChainUnaryServer(unaryStreamIntr)
+	unaryIntr := grpc.UnaryInterceptor(unaryChainSrv)
+
+	opts = append(opts, streamIntr, unaryIntr)
+
 	grpcSrv := grpc.NewServer(opts...)
 	srv, err := newGrpcServer(config)
 	if err != nil {
@@ -152,4 +167,11 @@ func authenticate(ctx context.Context) (context.Context, error) {
 	ctx = context.WithValue(ctx, subjectContextKey{}, subject)
 
 	return ctx, nil
+}
+
+/*
+subject checks
+*/
+func subject(ctx context.Context) string {
+	return ctx.Value(subjectContextKey{}).(string)
 }
