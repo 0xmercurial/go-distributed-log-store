@@ -3,9 +3,11 @@ package server
 import (
 	"context"
 	"io/ioutil"
+	"logstore/internal/authz"
 	tlscf "logstore/internal/config"
 	"logstore/internal/log/proto"
 	log "logstore/internal/logcomponents"
+
 	"net"
 	"testing"
 
@@ -76,8 +78,10 @@ func setupTest(t *testing.T, fn func(*Config)) (
 	commitLog, err := log.NewLog(dir, log.Config{})
 	assert.NoError(t, err)
 
+	authorizer := authz.New(tlscf.ACLModelFile, tlscf.ACLPolicyFile)
 	config = &Config{
-		CommitLog: commitLog,
+		CommitLog:  commitLog,
+		Authorizer: authorizer,
 	}
 	if fn != nil {
 		fn(config)
