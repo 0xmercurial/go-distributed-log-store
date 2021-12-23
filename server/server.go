@@ -6,6 +6,7 @@ import (
 
 	grpc_middleware "github.com/grpc-ecosystem/go-grpc-middleware"
 	grpc_auth "github.com/grpc-ecosystem/go-grpc-middleware/auth"
+	grpc_ctxtags "github.com/grpc-ecosystem/go-grpc-middleware/tags"
 
 	"time"
 
@@ -13,7 +14,6 @@ import (
 	"go.opencensus.io/plugin/ocgrpc"
 	"go.opencensus.io/stats/view"
 	"go.opencensus.io/trace"
-	"go.opentelemetry.io/plugin/ocgrpc"
 	"go.uber.org/zap"
 	"go.uber.org/zap/zapcore"
 
@@ -64,7 +64,7 @@ func NewGRPCServer(config *Config, opts ...grpc.ServerOption) (
 	}
 
 	traceCfg := trace.Config{
-		DefaultSampler: trace.AlwaysSample(),
+		DefaultSampler: trace.AlwaysSample(), // can pass in a func to determine sampling freq.
 	}
 	trace.ApplyConfig(traceCfg)
 
@@ -75,15 +75,30 @@ func NewGRPCServer(config *Config, opts ...grpc.ServerOption) (
 
 	//Stream Interceptor
 	streamSrvIntr := grpc_auth.StreamServerInterceptor(authenticate)
-	chainStreamSrv := grpc_middleware.ChainStreamServer(streamSrvIntr)
+	ssiTag := grpc_ctxtags.StreamServerInterceptor()
+	zapSSI := grpc_zap.StreamServerInterceptor(logger, zapOpts...)
+	chainStreamSrv := grpc_middleware.ChainStreamServer(
+		ssiTag,
+		zapSSI,
+		streamSrvIntr,
+	)
 	streamIntr := grpc.StreamInterceptor(chainStreamSrv)
 
 	//Unary Interceptor
 	unaryStreamIntr := grpc_auth.UnaryServerInterceptor(authenticate)
-	unaryChainSrv := grpc_middleware.ChainUnaryServer(unaryStreamIntr)
+	usiTag := grpc_ctxtags.UnaryServerInterceptor()
+	zapUSI := grpc_zap.UnaryServerInterceptor(logger, zapOpts...)
+	unaryChainSrv := grpc_middleware.ChainUnaryServer(
+		usiTag,
+		zapUSI,
+		unaryStreamIntr,
+	)
 	unaryIntr := grpc.UnaryInterceptor(unaryChainSrv)
 
-	opts = append(opts, streamIntr, unaryIntr)
+	//Stats Handler
+	statsHandler := grpc.StatsHandler(&ocgrpc.ServerHandler{})
+
+	opts = append(opts, streamIntr, unaryIntr, statsHandler)
 
 	grpcSrv := grpc.NewServer(opts...)
 	srv, err := newGrpcServer(config)

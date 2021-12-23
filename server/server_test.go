@@ -2,21 +2,40 @@ package server
 
 import (
 	"context"
+	"flag"
 	"io/ioutil"
 	"logstore/internal/authz"
 	tlscf "logstore/internal/config"
 	"logstore/internal/log/proto"
 	log "logstore/internal/logcomponents"
+	"os"
+	"time"
 
 	"net"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
+	"go.opencensus.io/examples/exporter"
+	"go.uber.org/zap"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/credentials"
 	"google.golang.org/grpc/status"
 )
+
+var debug = flag.Bool("debug", false, "Enable observability for debugging")
+
+func TestMain(m *testing.M) {
+	flag.Parse()
+	if *debug {
+		logger, err := zap.NewDevelopment()
+		if err != nil {
+			panic(err)
+		}
+		zap.ReplaceGlobals(logger)
+	}
+	os.Exit(m.Run())
+}
 
 func setupTest(t *testing.T, fn func(*Config)) (
 	rootClient proto.LogClient,
@@ -87,6 +106,29 @@ func setupTest(t *testing.T, fn func(*Config)) (
 		fn(config)
 	}
 
+	//Telemtry
+	var telemetryExporter *exporter.LogExporter
+	if *debug {
+		metricsFile, err := ioutil.TempFile("", "metrics-*.log")
+		assert.NoError(t, err)
+		t.Logf("metrics file: %s", metricsFile.Name())
+
+		tracesFile, err := ioutil.TempFile("", "traces-*.log")
+		assert.NoError(t, err)
+		t.Logf("traces file: %s", tracesFile.Name())
+
+		telemetryExporter, err = exporter.NewLogExporter(
+			exporter.Options{
+				MetricsLogFile:    metricsFile.Name(),
+				TracesLogFile:     tracesFile.Name(),
+				ReportingInterval: time.Second,
+			},
+		)
+		assert.NoError(t, err)
+		err = telemetryExporter.Start()
+		assert.NoError(t, err)
+	}
+
 	srv, err := NewGRPCServer(
 		config,
 		grpc.Creds(serverCreds),
@@ -102,6 +144,11 @@ func setupTest(t *testing.T, fn func(*Config)) (
 		rootConn.Close()
 		nobodyConn.Close()
 		listener.Close()
+		if telemetryExporter != nil {
+			time.Sleep(1500 * time.Millisecond)
+			telemetryExporter.Stop()
+			telemetryExporter.Close()
+		}
 	}
 }
 

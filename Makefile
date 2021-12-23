@@ -42,6 +42,8 @@ test:
 
 	go test -race ./...
 
+	cd server && go test -v -debug=true
+
 
 .PHONY: compile
 compile:
