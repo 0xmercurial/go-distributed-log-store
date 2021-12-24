@@ -29,6 +29,9 @@ type Config struct {
 	Authorizer Authorizer
 }
 
+/*
+CommitLog interface
+*/
 type CommitLog interface {
 	Append(*proto.Record) (uint64, error)
 	Read(uint64) (*proto.Record, error)
