@@ -19,9 +19,10 @@ func setupMember(t *testing.T, members []*Membership) (
 ) {
 	id := len(members)
 	ports := Get(1)
-	addr := fmt.Sprintf()
+	addr := fmt.Sprintf("%s:%d")
 }
 
+//TODO: Do I need all of this?
 //Helper funcs + consts + vars
 const (
 	lowPort   = 10000
