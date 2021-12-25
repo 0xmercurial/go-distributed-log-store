@@ -18,8 +18,8 @@ type Membership struct {
 }
 
 type Config struct {
-	NodeName       string
-	BindAddr       string
+	NodeName       string //unique name across serf cluster
+	BindAddr       string //address serf listens to for gossip protocol prop.
 	Tags           map[string]string
 	StartJoinAddrs []string
 }
@@ -66,4 +66,15 @@ func (m *Membership) setupSerf() error {
 	//Stop for event handling logic
 
 	return nil
+}
+
+func (m *Membership) eventHandler() {
+	for e := range m.events {
+		switch e.EventType() {
+		case serf.EventMemberJoin:
+			for _, member := range e.(serf.MemberEvent).Members {
+				member.Addr.DefaultMask() //placeholder
+			}
+		}
+	}
 }
