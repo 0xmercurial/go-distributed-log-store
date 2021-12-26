@@ -94,6 +94,9 @@ func (m *Membership) eventHandler() {
 	}
 }
 
+/*
+handleJoin accesses the Handler interface Join method
+*/
 func (m *Membership) handleJoin(member serf.Member) {
 	if err := m.handler.Join(
 		member.Name,
@@ -103,6 +106,9 @@ func (m *Membership) handleJoin(member serf.Member) {
 	}
 }
 
+/*
+handleLeave accesses the Handler interace Leave method
+*/
 func (m *Membership) handleLeave(member serf.Member) {
 	if err := m.handler.Leave(
 		member.Name,
