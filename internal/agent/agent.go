@@ -8,6 +8,7 @@ import (
 	"net"
 	"sync"
 
+	"go.uber.org/zap"
 	"google.golang.org/grpc"
 )
 
@@ -24,6 +25,45 @@ type Agent struct {
 	shutdown     bool
 	shutdowns    chan struct{}
 	shutdownLock sync.Mutex
+}
+
+func New(config Config) (*Agent, error) {
+	a := &Agent{
+		Config:    config,
+		shutdowns: make(chan struct{}),
+	}
+	setup := []func() error{
+		a.setupLogger,
+		a.setupLog,
+		a.setupServer,
+		a.setupMembership,
+	}
+
+	for _, fn := range setup {
+		if err := fn(); err != nil {
+			return nil, err
+		}
+	}
+	return a, nil
+}
+
+func (a *Agent) setupLogger() error {
+	logger, err := zap.NewDevelopment()
+	if err != nil {
+		return err
+	}
+	zap.ReplaceGlobals(logger)
+	return nil
+}
+
+func (a *Agent) setupLog() error {
+	var err error
+	a.log, err = logcomponents.NewLog(
+		a.Config.DataDir,
+		logcomponents.Config{},
+	)
+
+	return err
 }
 
 type Config struct {
