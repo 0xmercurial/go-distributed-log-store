@@ -35,8 +35,8 @@ func New(config Config) (*Agent, error) {
 	setup := []func() error{
 		a.setupLogger,
 		a.setupLog,
-		a.setupServer,
-		a.setupMembership,
+		// a.setupServer,
+		// a.setupMembership,
 	}
 
 	for _, fn := range setup {
@@ -65,6 +65,15 @@ func (a *Agent) setupLog() error {
 
 	return err
 }
+
+// func (a *Agent) setupServer() error {
+// 	authorizer := authz.New(
+// 		a.Config.ACLModelFile,
+// 		a.Config.ACLPolicyFile,
+// 	)
+
+// 	serverConfig := &ser
+// }
 
 type Config struct {
 	ServerTLSConfig *tls.Config
