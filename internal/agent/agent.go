@@ -3,13 +3,16 @@ package agent
 import (
 	"crypto/tls"
 	"fmt"
+	"logstore/internal/authz"
 	"logstore/internal/discovery"
 	"logstore/internal/logcomponents"
+	"logstore/internal/server"
 	"net"
 	"sync"
 
 	"go.uber.org/zap"
 	"google.golang.org/grpc"
+	"google.golang.org/grpc/credentials"
 )
 
 /*
@@ -35,8 +38,8 @@ func New(config Config) (*Agent, error) {
 	setup := []func() error{
 		a.setupLogger,
 		a.setupLog,
-		// a.setupServer,
-		// a.setupMembership,
+		a.setupServer,
+		//a.setupMembership,
 	}
 
 	for _, fn := range setup {
@@ -66,14 +69,43 @@ func (a *Agent) setupLog() error {
 	return err
 }
 
-// func (a *Agent) setupServer() error {
-// 	authorizer := authz.New(
-// 		a.Config.ACLModelFile,
-// 		a.Config.ACLPolicyFile,
-// 	)
+func (a *Agent) setupServer() error {
+	authorizer := authz.New(
+		a.Config.ACLModelFile,
+		a.Config.ACLPolicyFile,
+	)
 
-// 	serverConfig := &ser
-// }
+	serverConfig := &server.Config{
+		CommitLog:  a.log,
+		Authorizer: authorizer,
+	}
+
+	var opts []grpc.ServerOption
+	if a.Config.ServerTLSConfig != nil {
+		creds := credentials.NewTLS(a.Config.ServerTLSConfig)
+		opts = append(opts, grpc.Creds(creds))
+	}
+
+	var err error
+	a.server, err = server.NewGRPCServer(serverConfig, opts...)
+	if err != nil {
+		return err
+	}
+	rpcAddr, err := a.RPCAddr()
+	if err != nil {
+		return err
+	}
+	listener, err := net.Listen("tcp", rpcAddr)
+	if err != nil {
+		return err
+	}
+	go func() {
+		if err := a.server.Serve(listener); err != nil {
+			//_ = a.Shutdown()
+		}
+	}()
+	return err
+}
 
 type Config struct {
 	ServerTLSConfig *tls.Config
