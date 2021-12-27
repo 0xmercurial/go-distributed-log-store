@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"logstore/internal/authz"
 	"logstore/internal/discovery"
+	"logstore/internal/log/proto"
 	"logstore/internal/logcomponents"
 	"logstore/internal/server"
 	"net"
@@ -23,7 +24,7 @@ type Agent struct {
 	log        *logcomponents.Log
 	server     *grpc.Server
 	membership *discovery.Membership
-	replicator *logcomponents.Replica
+	replica    *logcomponents.Replica
 
 	shutdown     bool
 	shutdowns    chan struct{}
@@ -39,7 +40,7 @@ func New(config Config) (*Agent, error) {
 		a.setupLogger,
 		a.setupLog,
 		a.setupServer,
-		//a.setupMembership,
+		a.setupMembership,
 	}
 
 	for _, fn := range setup {
@@ -101,10 +102,73 @@ func (a *Agent) setupServer() error {
 	}
 	go func() {
 		if err := a.server.Serve(listener); err != nil {
-			//_ = a.Shutdown()
+			_ = a.Shutdown()
 		}
 	}()
 	return err
+}
+
+func (a *Agent) setupMembership() error {
+	rpcAddr, err := a.Config.RPCAddr()
+	if err != nil {
+		return err
+	}
+	var opts []grpc.DialOption
+	if a.Config.PeerTLSConfig != nil {
+		dialOpt := grpc.WithTransportCredentials(
+			credentials.NewTLS(a.Config.PeerTLSConfig),
+		)
+		opts = append(opts, dialOpt)
+	}
+
+	conn, err := grpc.Dial(rpcAddr, opts...)
+	if err != nil {
+		return err
+	}
+	client := proto.NewLogClient(conn)
+	a.replica = &logcomponents.Replica{
+		DialOptions: opts,
+		LocalServer: client,
+	}
+
+	a.membership, err = discovery.New(
+		a.replica,
+		discovery.Config{
+			NodeName: a.Config.NodeName,
+			BindAddr: a.Config.BindAddr,
+			Tags: map[string]string{
+				"rpc_addr": rpcAddr,
+			},
+			StartJoinAddrs: a.Config.StartJoinAddrs,
+		},
+	)
+	return err
+}
+
+func (a *Agent) Shutdown() error {
+	a.shutdownLock.Lock()
+	defer a.shutdownLock.Unlock()
+	if a.shutdown {
+		return nil
+	}
+	a.shutdown = true
+	close(a.shutdowns)
+	graceful := func() error {
+		a.server.GracefulStop()
+		return nil
+	}
+	shutdown := []func() error{
+		a.membership.Leave,
+		a.replica.Close,
+		graceful,
+		a.log.Close,
+	}
+	for _, fn := range shutdown {
+		if err := fn(); err != nil {
+			return err
+		}
+	}
+	return nil
 }
 
 type Config struct {
