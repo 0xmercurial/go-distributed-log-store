@@ -8,4 +8,4 @@ To test, run
 make init gencert test
 ```
 
-Implements Raft vis Serf
+Principal struct is the `Agent` struct. High-level, `Agents` replicate logs written to other `Agents` leveraging HashiCorps Serf package (implements gossip protocol). `Agents` communicate via gRPC.
