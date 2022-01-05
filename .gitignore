@@ -1,3 +1,4 @@
 secrets/**
 **/*.pem
 **/*.csr
+*vscode/*
