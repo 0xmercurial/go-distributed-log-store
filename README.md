@@ -2,11 +2,13 @@
 
 Iterative development of a distributed log store from scratch in Go.
 
-To test, run 
+To test* entire codebase, run 
 
 ```
 make init gencert test
 ```
+* test takes approv. 30-40 seconds
+
 
 Principal struct is the `Agent` struct. High-level:
 - `Agent`s replicate logs written to other `Agents` leveraging HashiCorps Serf package (implements gossip protocol). 
