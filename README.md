@@ -13,6 +13,7 @@ make init gencert test
 Principal struct is the `Agent` struct. High-level:
 - `Agent`s can be read from/ written to, and replicate/propgate logs to other `Agents` leveraging HashiCorp's Serf package (implements gossip protocol). 
 - `Agent`s communicate via gRPC.
+- `Agent` code + tests found here: `logstore/internal/agent`
 
 Current State:
 - Simple replication via gossip protocol has been implemented.
