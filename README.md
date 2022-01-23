@@ -7,11 +7,11 @@ To test* entire codebase, run
 ```
 make init gencert test
 ```
-* test takes approv. 30-40 seconds
+* test takes approx. 30-40 seconds
 
 
 Principal struct is the `Agent` struct. High-level:
-- `Agent`s replicate logs written to other `Agents` leveraging HashiCorps Serf package (implements gossip protocol). 
+- `Agent`s can be read from/ written to, and replicate/propgate logs to other `Agents` leveraging HashiCorp's Serf package (implements gossip protocol). 
 - `Agent`s communicate via gRPC.
 
 Current State:
