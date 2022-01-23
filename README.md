@@ -7,7 +7,7 @@ To test* entire codebase, run
 ```
 make init gencert test
 ```
-* test takes approx. 30-40 seconds
+*test takes approx. 30-40 seconds
 
 
 Principal struct is the `Agent` struct. High-level:
