@@ -1,4 +1,5 @@
-secrets/**
+secrets/*.pem
+secrets/*.csr
 **/*.pem
 **/*.csr
 *vscode/*

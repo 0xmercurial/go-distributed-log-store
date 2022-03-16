@@ -40,7 +40,7 @@ gencert:
 .PHONY: test
 test:
 
-	go test -race ./...
+	go test -race -coverprofile=coverage.txt -covermode=atomic ./...
 
 	cd internal/server && go test -v -debug=true
 
