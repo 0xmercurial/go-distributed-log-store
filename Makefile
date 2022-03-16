@@ -1,7 +1,7 @@
 .EXPORT_ALL_VARIABLES:
 DIR=secrets
 CONFIG_PATH=$(shell pwd)
-GP = ${GOPATH}
+GP = $(GOPATH)
 CONFIG_DIR=${CONFIG_PATH}/${DIR}
 
 .PHONY: init
