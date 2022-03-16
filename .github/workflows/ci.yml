@@ -15,6 +15,6 @@ jobs:
       - name: Install CFSSL
         run: go get -d github.com/cloudflare/cfssl/cmd/cfssl && go get -d github.com/cloudflare/cfssl/cmd/cfssljson
       - name: Run coverage
-        run: go test -race -coverprofile=coverage.txt -covermode=atomic ./...
+        run: make init gencert test
       - name: Upload coverage to Codecov
         run: bash <(curl -s https://codecov.io/bash)
