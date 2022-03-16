@@ -13,14 +13,14 @@ init:
 gencert:
 	${GOPATH}/bin/cfssl gencert -initca tls-config/ca-csr.json | ${GOPATH}/bin/cfssljson -bare ca
 
-	cfssl gencert \
+	${GOPATH}/bin/cfssl gencert \
 		-ca=ca.pem \
 		-ca-key=ca-key.pem \
 		-config=tls-config/ca-config.json \
 		-profile=server \
-		tls-config/server-csr.json | cfssljson -bare server
+		tls-config/server-csr.json | ${GOPATH}/bin/cfssljson -bare server
 
-	cfssl gencert \
+	${GOPATH}/bin/cfssl gencert \
 		-ca=ca.pem \
 		-ca-key=ca-key.pem \
 		-config=tls-config/ca-config.json \

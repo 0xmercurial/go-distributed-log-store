@@ -55,7 +55,7 @@ jobs:
         GOPATH: /home/runner/work/go-distributed-log-store/go
         GOBIN:  /home/runner/work/go-distributed-log-store/go/bin
     - name: generate certs
-      run: cd ../go-distributed-log-store && make init
+      run: cd ../go-distributed-log-store && make init gencert
       env:
         GOPATH: /home/runner/work/go-distributed-log-store/go
         GOBIN: /home/runner/work/go-distributed-log-store/go/bin
