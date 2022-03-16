@@ -36,8 +36,7 @@ jobs:
       uses: actions/checkout@v2
       with:
         fetch-depth: 1
-        # path: go/src/github.com/0xmercuial/go-distributed-log-store
-
+        
     - name: Debug
       run: |
         pwd
@@ -61,15 +60,3 @@ jobs:
     #   env:
     #     GOPATH: /home/runner/work/go-distributed-log-store/go
     #     GOBIN: /home/runner/work/go-distributed-log-store/go/bin
-
-
-    # - name: Test
-    #   run: |
-    #     go get -u golang.org/x/tools/cmd/cover
-    #     go get -u golang.org/x/net/context
-    #     go get -u golang.org/x/net/context/ctxhttp
-    #     go get -u github.com/golang/protobuf/proto
-    #     go get -u github.com/golang/protobuf/protoc-gen-go
-    #     go test -cover $(go list ./... | grep -v /vendor/)
-    #   env:
-    #     GOPATH: /home/runner/work/go-distributed-log-store/go
