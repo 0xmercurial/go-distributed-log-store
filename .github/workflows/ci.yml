@@ -13,7 +13,7 @@ jobs:
         with:
           go-version: '1.17'
       - name: Install CFSSL + Run Test
-        #run: echo $GOPATH
-        run: go get -d github.com/cloudflare/cfssl/cmd/cfssl && go get -d github.com/cloudflare/cfssl/cmd/cfssljson && make init
+        run: echo ${GOPATH}
+        #run: go get -d github.com/cloudflare/cfssl/cmd/cfssl && go get -d github.com/cloudflare/cfssl/cmd/cfssljson && make init
       - name: Upload coverage to Codecov
         run: bash <(curl -s https://codecov.io/bash)
