@@ -26,15 +26,15 @@ gencert:
 		-config=tls-config/ca-config.json \
 		-profile=client \
 		-cn="root" \
-		tls-config/client-csr.json | cfssljson -bare root-client
+		tls-config/client-csr.json | ${GOPATH}/bin/cfssljson -bare root-client
 
-	cfssl gencert \
+	${GOPATH}/bin/cfssl gencert \
 		-ca=ca.pem \
 		-ca-key=ca-key.pem \
 		-config=tls-config/ca-config.json \
 		-profile=client \
 		-cn="nobody" \
-		tls-config/client-csr.json | cfssljson -bare nobody-client
+		tls-config/client-csr.json | ${GOPATH}/bin/cfssljson -bare nobody-client
 
 	mv *.pem *.csr secrets
 
@@ -44,7 +44,6 @@ test:
 	go test -race -coverprofile=coverage.txt -covermode=atomic ./...
 
 	cd internal/server && go test -v -debug=true
-
 
 .PHONY: compile
 compile:
