@@ -7,11 +7,11 @@ CONFIG_DIR=${CONFIG_PATH}/${DIR}
 .PHONY: init
 init:
 	mkdir -p ${CONFIG_DIR}
-	echo $$GOPATH
+	echo ${GOPATH}
 
 .PHONY: gencert
 gencert:
-	$${GOPATH}/bin/cfssl gencert \
+	${GOPATH}/bin/cfssl gencert \
 		-initca tls-config/ca-csr.json | cfssljson -bare ca
 
 	cfssl gencert \

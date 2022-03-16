@@ -52,7 +52,9 @@ jobs:
     
     - name: Install CFSSL + Run Test
       #run: echo ${GOPATH}
-      run: go install github.com/cloudflare/cfssl/cmd/cfssl@latest && go install github.com/cloudflare/cfssl/cmd/cfssljson@latest && $GOPATH/bin/cfssl version
+      run: go install github.com/cloudflare/cfssl/cmd/cfssl@latest && \
+           go install github.com/cloudflare/cfssl/cmd/cfssljson@latest && \
+           make init
       env:
         GOPATH: /home/runner/work/go-distributed-log-store/go
         GOBIN: /home/runner/work/go-distributed-log-store/go/bin
