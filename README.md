@@ -1,3 +1,8 @@
+![Github Actions](https://github.com/0xmercurial/go-distributed-log-store/actions/workflows/ci.yml/badge.svg)
+[![codecov](https://codecov.io/gh/0xmercurial/go-distributed-log-store/branch/main/graph/badge.svg)](https://codecov.io/gh/0xmercurial/go-distributed-log-store)
+
+
+
 # Distributed Log Store (in Go)
 
 Iterative development of a distributed log store from scratch in Go.
