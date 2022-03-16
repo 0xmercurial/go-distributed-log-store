@@ -36,7 +36,7 @@ jobs:
       uses: actions/checkout@v2
       with:
         fetch-depth: 1
-        
+
     - name: Debug
       run: |
         pwd
@@ -47,16 +47,15 @@ jobs:
         echo ${GOBIN}
       env:
         GOPATH: /home/runner/work/go-distributed-log-store/go
-        GOBIN: /home/runner/work/go-distributed-log-store/go/bin
+        GOBIN:  /home/runner/work/go-distributed-log-store/go/bin
     
     - name: Install CFSSL
-      run: go install github.com/cloudflare/cfssl/cmd/cfssl@latest && go install github.com/cloudflare/cfssl/cmd/cfssljson@latest && tree ../
+      run: go install github.com/cloudflare/cfssl/cmd/cfssl@latest && go install github.com/cloudflare/cfssl/cmd/cfssljson@latest
+      env:
+        GOPATH: /home/runner/work/go-distributed-log-store/go
+        GOBIN:  /home/runner/work/go-distributed-log-store/go/bin
+    - name: generate certs
+      run: cd ../go-distributed-log-store && make init
       env:
         GOPATH: /home/runner/work/go-distributed-log-store/go
         GOBIN: /home/runner/work/go-distributed-log-store/go/bin
-
-    # - name: generate certs
-    #   run: cd ../ &&  
-    #   env:
-    #     GOPATH: /home/runner/work/go-distributed-log-store/go
-    #     GOBIN: /home/runner/work/go-distributed-log-store/go/bin
