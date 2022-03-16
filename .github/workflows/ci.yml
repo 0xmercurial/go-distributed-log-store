@@ -60,4 +60,4 @@ jobs:
         GOPATH: /home/runner/work/go-distributed-log-store/go
         GOBIN: /home/runner/work/go-distributed-log-store/go/bin
     - name: Upload coverage to Codecov
-        run: bash <(curl -s https://codecov.io/bash)
+      run: bash <(curl -s https://codecov.io/bash)
