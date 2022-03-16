@@ -47,12 +47,15 @@ jobs:
         echo ${GOROOT}
       env:
         GOPATH: /home/runner/work/go-distributed-log-store/go
+        GOBIN: /home/runner/work/go-distributed-log-store/go/bin
     
     - name: Install CFSSL + Run Test
       #run: echo ${GOPATH}
-      run: go get -d github.com/cloudflare/cfssl/cmd/cfssl && go get -d github.com/cloudflare/cfssl/cmd/cfssljson && ls $GOPATH/
+      run: go get -d github.com/cloudflare/cfssl/cmd/cfssl && go get -d github.com/cloudflare/cfssl/cmd/cfssljson && ls $GOPATH/bin
       env:
         GOPATH: /home/runner/work/go-distributed-log-store/go
+        GOBIN: /home/runner/work/go-distributed-log-store/go/bin
+
 
     # - name: Test
     #   run: |
