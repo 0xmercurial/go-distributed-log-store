@@ -10,7 +10,7 @@ init:
 
 .PHONY: gencert
 gencert:
-	GP/bin/cfssl gencert \
+	$(GP)/bin/cfssl gencert \
 		-initca tls-config/ca-csr.json | cfssljson -bare ca
 
 	cfssl gencert \
