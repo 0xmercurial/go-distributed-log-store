@@ -1,19 +1,60 @@
-name: Coverage
+# name: Coverage
 
+# on: [push]
+
+# jobs:
+#   build:
+#     runs-on: ubuntu-latest
+#     steps:
+#       - uses: actions/checkout@v2
+#         with:
+#           fetch-depth: 2
+#       - uses: actions/setup-go@v2
+#         with:
+#           go-version: '1.17'
+#       - name: Install CFSSL + Run Test
+#         run: echo ${GOPATH}
+#         #run: go get -d github.com/cloudflare/cfssl/cmd/cfssl && go get -d github.com/cloudflare/cfssl/cmd/cfssljson && make init
+#       - name: Upload coverage to Codecov
+#         run: bash <(curl -s https://codecov.io/bash)
+
+name: Testing
 on: [push]
 
 jobs:
   build:
+    name: Build
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
-        with:
-          fetch-depth: 2
-      - uses: actions/setup-go@v2
-        with:
-          go-version: '1.17'
-      - name: Install CFSSL + Run Test
-        run: echo ${GOPATH}
-        #run: go get -d github.com/cloudflare/cfssl/cmd/cfssl && go get -d github.com/cloudflare/cfssl/cmd/cfssljson && make init
-      - name: Upload coverage to Codecov
-        run: bash <(curl -s https://codecov.io/bash)
+
+    - name: Set up Go 1.17
+      uses: actions/setup-go@v2
+      with:
+        go-version: '1.17'
+
+    - name: Check out code into the Go module directory
+      uses: actions/checkout@v2
+      with:
+        fetch-depth: 1
+        path: go/src/github.com/0xmercuial/go-distributed-log-store
+
+    - name: Debug
+      run: |
+        pwd
+        echo ${HOME}
+        echo ${GITHUB_WORKSPACE}
+        echo ${GOPATH}
+        echo ${GOROOT}
+      env:
+        GOPATH: /home/runner/work/go-distributed-log-store/go
+
+    # - name: Test
+    #   run: |
+    #     go get -u golang.org/x/tools/cmd/cover
+    #     go get -u golang.org/x/net/context
+    #     go get -u golang.org/x/net/context/ctxhttp
+    #     go get -u github.com/golang/protobuf/proto
+    #     go get -u github.com/golang/protobuf/protoc-gen-go
+    #     go test -cover $(go list ./... | grep -v /vendor/)
+    #   env:
+    #     GOPATH: /home/runner/work/go-distributed-log-store/go
