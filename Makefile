@@ -1,6 +1,7 @@
 .EXPORT_ALL_VARIABLES:
 DIR=secrets
 CONFIG_PATH=$(shell pwd)
+GOPATH = ${GOPATH}
 CONFIG_DIR=${CONFIG_PATH}/${DIR}
 
 .PHONY: init
@@ -9,7 +10,7 @@ init:
 
 .PHONY: gencert
 gencert:
-	$GOPATH/bin/cfssl gencert \
+	GOPATH/bin/cfssl gencert \
 		-initca tls-config/ca-csr.json | cfssljson -bare ca
 
 	cfssl gencert \
