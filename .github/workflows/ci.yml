@@ -54,8 +54,13 @@ jobs:
       env:
         GOPATH: /home/runner/work/go-distributed-log-store/go
         GOBIN:  /home/runner/work/go-distributed-log-store/go/bin
-    - name: generate certs
-      run: cd ../go-distributed-log-store && make init gencert test
+    - name: Generate Certs
+      run: cd ../go-distributed-log-store && make init gencert
+      env:
+        GOPATH: /home/runner/work/go-distributed-log-store/go
+        GOBIN: /home/runner/work/go-distributed-log-store/go/bin
+    - name: Run Tests
+      run: 	go test -race -coverprofile=coverage.txt -covermode=atomic ./...
       env:
         GOPATH: /home/runner/work/go-distributed-log-store/go
         GOBIN: /home/runner/work/go-distributed-log-store/go/bin
