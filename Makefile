@@ -7,7 +7,7 @@ CONFIG_DIR=${CONFIG_PATH}/${DIR}
 .PHONY: init
 init:
 	mkdir -p ${CONFIG_DIR}
-	echo "${GOPATH}"
+	echo "$(GOPATH)"
 
 .PHONY: gencert
 gencert:
