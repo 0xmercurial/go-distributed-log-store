@@ -11,8 +11,7 @@ init:
 
 .PHONY: gencert
 gencert:
-	${GOPATH}/bin/cfssl gencert \
-		-initca tls-config/ca-csr.json | cfssljson -bare ca
+	${GOPATH}/bin/cfssl gencert -initca tls-config/ca-csr.json | ${GOPATH}/bin/cfssljson -bare ca
 
 	cfssl gencert \
 		-ca=ca.pem \
