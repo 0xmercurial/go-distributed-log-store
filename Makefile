@@ -9,7 +9,7 @@ init:
 
 .PHONY: gencert
 gencert:
-	cfssl gencert \
+	$GOPATH/bin/cfssl gencert \
 		-initca tls-config/ca-csr.json | cfssljson -bare ca
 
 	cfssl gencert \
