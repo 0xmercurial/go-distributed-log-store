@@ -1,29 +1,9 @@
-# name: Coverage
-
-# on: [push]
-
-# jobs:
-#   build:
-#     runs-on: ubuntu-latest
-#     steps:
-#       - uses: actions/checkout@v2
-#         with:
-#           fetch-depth: 2
-#       - uses: actions/setup-go@v2
-#         with:
-#           go-version: '1.17'
-#       - name: Install CFSSL + Run Test
-#         run: echo ${GOPATH}
-#         #run: go get -d github.com/cloudflare/cfssl/cmd/cfssl && go get -d github.com/cloudflare/cfssl/cmd/cfssljson && make init
-#       - name: Upload coverage to Codecov
-#         run: bash <(curl -s https://codecov.io/bash)
-
 name: Testing
 on: [push]
 
 jobs:
   build:
-    name: Build
+    name: Test
     runs-on: ubuntu-latest
     steps:
 
@@ -37,7 +17,7 @@ jobs:
       with:
         fetch-depth: 1
 
-    - name: Debug
+    - name: Debug go env variables
       run: |
         pwd
         echo ${HOME}
@@ -49,15 +29,17 @@ jobs:
         GOPATH: /home/runner/work/go-distributed-log-store/go
         GOBIN:  /home/runner/work/go-distributed-log-store/go/bin
     
-    - name: Install CFSSL
+    - name: Install cfssl CLI
       run: go install github.com/cloudflare/cfssl/cmd/cfssl@latest && go install github.com/cloudflare/cfssl/cmd/cfssljson@latest
       env:
         GOPATH: /home/runner/work/go-distributed-log-store/go
         GOBIN:  /home/runner/work/go-distributed-log-store/go/bin
-    - name: Generate Certs
+
+    - name: Generate certs + test logstore
       run: cd ../go-distributed-log-store && make init gencert test
       env:
         GOPATH: /home/runner/work/go-distributed-log-store/go
         GOBIN: /home/runner/work/go-distributed-log-store/go/bin
-    - name: Upload coverage to Codecov
+
+    - name: Upload code coverage to Codecov
       run: bash <(curl -s https://codecov.io/bash)
